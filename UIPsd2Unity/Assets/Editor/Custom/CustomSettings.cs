@@ -146,7 +146,11 @@ public static class CustomSettings
        _GT(typeof(UILabel)),
        _GT(typeof(UIButton)),
        _GT(typeof(UIPanel)),
-       _GT(typeof(UIInput)),     
+       _GT(typeof(UIInput)), 
+       _GT(typeof(UIToggle)),   
+       _GT(typeof(UITable)),
+       _GT(typeof(UIGrid)),
+       _GT(typeof(EventDelegate)), 
 #endif
     };
 

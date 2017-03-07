@@ -1,0 +1,6 @@
+
+local LuaBaseWidget = {}
+
+
+
+return LuaBaseWidget

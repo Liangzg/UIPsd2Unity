@@ -1,0 +1,37 @@
+#SCRIPTNAME# = {};
+local this = #SCRIPTNAME#;
+--local #SCRIPTCTRL# = require("Controller/#SCRIPTCTRL#")
+local gameObject;
+local transform;
+
+--由LuaBehaviour自动调用
+function #SCRIPTNAME#.Awake(obj)
+	gameObject = obj;
+	transform = obj.transform;
+
+	--test
+	this.OnInit()
+end
+
+--由LuaBehaviour自动调用
+function #SCRIPTNAME#.Start()
+
+end
+
+--由LuaBehaviour自动调用
+function #SCRIPTNAME#.OnInit()
+    this.widgets = {
+#WIDGETS#
+    }
+	LuaUIHelper.bind(gameObject , #SCRIPTNAME#)
+end
+
+--由LuaBehaviour自动调用
+function #SCRIPTNAME#.OnClose()
+
+end
+
+--单击事件--
+function #SCRIPTNAME#.OnDestroy()
+
+end
