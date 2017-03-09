@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
     public class NTextureBinder : ABinder
     {

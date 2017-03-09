@@ -6,7 +6,7 @@ using PhotoshopFile;
 using UnityEditor;
 using UnityEngine;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	/// <summary>
 	/// Defines settings for PSDExporter to use
@@ -369,7 +369,7 @@ namespace subjectnerdagreement.psdexport
 
 //			string layerPath = Path.Combine(directoryPath, layerFile);
 
-            string[] exportNameAndPath = WordParser.GetTextureExportPath(layerName);
+            string[] exportNameAndPath = ImageBinder.GetTextureExportPath(layerName);
             string basePath = string.Format("Assets/{0}", exportNameAndPath[1]);
 			if (!Directory.Exists(basePath))
 			{

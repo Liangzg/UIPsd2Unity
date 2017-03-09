@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEngine;
 #endif
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
     [Serializable]
     public class AssetDir

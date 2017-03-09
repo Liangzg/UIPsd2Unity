@@ -5,7 +5,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	public class PSDPostProcessor : AssetPostprocessor
 	{

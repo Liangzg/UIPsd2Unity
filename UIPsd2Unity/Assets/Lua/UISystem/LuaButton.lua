@@ -8,9 +8,11 @@ function LuaButton:bind( root , widget )
     self.transform = root
     self.gameObject = root.gameObject
 
-    if not widget.onClick then  return btn  end
-
-    EventDelegate.Add(btn.onClick , EventDelegate.Callback(widget.onClick))
+    if widget.onClick then
+        EventDelegate.Add(btn.onClick , EventDelegate.Callback(widget.onClick))
+    else
+        print("cant find button click !~")
+    end
 
     return btn
 end

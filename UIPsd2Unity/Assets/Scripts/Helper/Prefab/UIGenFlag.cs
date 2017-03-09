@@ -1,8 +1,7 @@
-﻿using System;
+﻿#if UNITY_EDITOR
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Xml;
 
 namespace UIHelper
 {
@@ -28,17 +27,8 @@ namespace UIHelper
         /// 层次深度
         /// </summary>
         public int Depth = -1;
-        
-	    // Use this for initialization
-	    void Start ()
-	    {
-	        
-	    }
-	
-	    // Update is called once per frame
-	    void Update () {
-	
-	    }
+
+        private string relativeHierarchy;
 
         public string initRelativeHierarchy(GameObject root)
         {
@@ -55,8 +45,8 @@ namespace UIHelper
 
             if (string.IsNullOrEmpty(ScriptType))
                 ScriptType = FindWidgetTypes()[0];
-
-            return string.Join(".", buf.ToArray());
+            relativeHierarchy = string.Join(".", buf.ToArray());
+            return relativeHierarchy;
         }
 
 
@@ -80,7 +70,33 @@ namespace UIHelper
             return types;
         }
 
+
+        /// <summary>
+        /// 序列化UI配置数据
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        public void serializeFlag(XmlElement ele)
+        {
+            ele.SetAttribute("field", this.Field);
+            ele.SetAttribute("ScriptType", this.ScriptType);
+            ele.SetAttribute("hierarchy", this.relativeHierarchy);
+        }
+
+        /// <summary>
+        /// 反序列化记录数据
+        /// </summary>
+        /// <param name="doc"></param>
+        public void deserializeFlag(XmlElement ele)
+        {
+            this.Field = ele.GetAttribute("field");
+            this.ScriptType = ele.GetAttribute("ScriptType");
+            this.relativeHierarchy = ele.GetAttribute("hierarchy");
+        }
+
+
     }
 
 }
 
+#endif

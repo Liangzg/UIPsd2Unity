@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
     public class NAtlasHelper
     {

@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Text;
+using System.Xml;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,6 +13,7 @@ namespace UIHelper
         public override void OnInspectorGUI()
         {
             UIPanelRoot root = target as UIPanelRoot;
+            if (root == null) return;
 
             EditorGUIUtility.labelWidth = 120;
 //            EditorGUILayout.PropertyField(serializedObject.FindProperty("ScriptName"));
@@ -29,12 +32,27 @@ namespace UIHelper
             }
             GUILayout.TextArea(root.FilePath);
             EditorGUILayout.EndHorizontal();
-
+            
+            GUI.color = Color.green;
             if (GUILayout.Button("Build"))
             {
-                root.BuildPanel(root.gameObject);
+                XmlDocument doc = new XmlDocument();
+                XmlDeclaration dec = doc.CreateXmlDeclaration("1.0", "UTF-8", "yes");
+                doc.AppendChild(dec);
+
+                root.BuildPanel(doc , root.gameObject);
+
+                string genDir = Path.Combine(Application.dataPath, ToolConst.GenLogFolder);
+                if (! Directory.Exists(genDir)) Directory.CreateDirectory(genDir);
+
+                string filePath = Path.Combine(genDir, root.name + ".xml");
+                doc.Save(filePath);
+
                 Debug.Log("<color=#2fd95b>Build Success !</color>");
-            }  
+            }
+            GUI.color = Color.white;
         }
+
+        
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
     /// <summary>
     /// 忽略节点资源

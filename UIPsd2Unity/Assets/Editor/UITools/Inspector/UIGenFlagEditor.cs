@@ -17,7 +17,7 @@ namespace UIHelper
             UIGenFlag genFlag = target as UIGenFlag;
 
             EditorGUIUtility.labelWidth = 120;
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("Uri"));
+//            EditorGUILayout.PropertyField(serializedObject.FindProperty("Uri"));
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Field"));
 

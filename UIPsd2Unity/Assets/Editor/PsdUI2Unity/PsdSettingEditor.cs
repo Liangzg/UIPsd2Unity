@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	[CustomEditor(typeof(PsdSetting))]
 	public class PsdSettingEditor : Editor

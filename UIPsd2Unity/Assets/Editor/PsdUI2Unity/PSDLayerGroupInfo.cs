@@ -1,4 +1,4 @@
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	/// <summary>
 	/// Data on PSD layer groups

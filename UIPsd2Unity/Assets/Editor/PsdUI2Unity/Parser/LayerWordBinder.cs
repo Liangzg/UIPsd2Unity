@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
     /// <summary>
     /// 词法绑定 
@@ -22,7 +22,7 @@ namespace subjectnerdagreement.psdexport
         {
             // 参数绑定解析
             importParser["name"] = new NameBinder();
-//            importParser["img"] = new ImageBinder();
+            importParser["img"] = new ImageBinder();
             importParser["ignore"] = new IgnoreBinder();
             // 脚本组件
             if (PsdSetting.Instance.curGUIType == GUIType.UGUI)

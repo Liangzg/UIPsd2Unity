@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PhotoshopFile;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	/// <summary>
 	/// Stores preparsed information about the layers in a PSD file

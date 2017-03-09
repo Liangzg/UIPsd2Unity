@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
-using Assets.Editor.UI;
+using System.Xml;
+using LuaInterface;
 
 namespace UIHelper
 {
@@ -14,22 +13,11 @@ namespace UIHelper
 
         public string ScriptName;
 
-        public string FilePath;
+        public string FilePath = "";
 
         public int Depth = -1;
         public GameObject RelactiveRoot;
         public string relativePath;
-
-
-	    // Use this for initialization
-	    void Start () {
-	
-	    }
-	
-	    // Update is called once per frame
-	    void Update () {
-	
-	    }
 
         public string initRelativeHierarchy(GameObject root)
         {
@@ -47,13 +35,13 @@ namespace UIHelper
             return relativePath;
         }
 
-        public void BuildPanel(GameObject root)
+        public void BuildPanel(XmlDocument doc , GameObject root)
         {
             this.initRelativeHierarchy(root);
 
             if (string.IsNullOrEmpty(FilePath))
             {
-                Debug.LogError("请先配置PanelRoot导出的脚本文件路径! Hierarchy:" + relativePath);
+                Debugger.LogError("请先配置PanelRoot导出的脚本文件路径! Hierarchy:" + relativePath);
                 return;
             }
 
@@ -65,37 +53,50 @@ namespace UIHelper
                 if (childPanel.gameObject.Equals(this.gameObject))  continue;
                 
                 childRoots.Add(childPanel);
-                childPanel.BuildPanel(root);
+                childPanel.BuildPanel(doc , root);
 
                 buf.AppendFormat("\t\t{{field=\"{0}\",path=\"{1}\",src = LuaScript}},\n",
                              string.IsNullOrEmpty(childPanel.ScriptName) ? childPanel.gameObject.name : childPanel.ScriptName,
                              childPanel.relativePath);
             }
             
-            UIGenFlag[] genFlags = this.GetComponentsInChildren<UIGenFlag>();
+            List<UIGenFlag> childFlags = new List<UIGenFlag>();
+            findBuildComponent(this.gameObject , childFlags);
             
-            foreach (UIGenFlag gen in genFlags)
-            {
-                gen.initRelativeHierarchy(this.RelactiveRoot);
-                bool canGen = true;
-                foreach (UIPanelRoot childPanel in childRoots)
-                {
-                    if (gen.Depth > childPanel.Depth)
-                    {
-                        canGen = false;
-                        break;
-                    }
-                }
-                if (canGen)
-                    buf.AppendLine(formatExport(gen));
-            }
-            
-            this.writeScriptFile(buf.ToString());
+            this.writeScriptFile(buf , childFlags);
+
+#if UNITY_EDITOR
+            //保存记录
+            this.serializePanelRoot(doc , childFlags);
+#endif
         }
 
 
-        private void writeScriptFile(string viewPanel)
+        private void findBuildComponent(GameObject gObj, List<UIGenFlag> childFlags)
         {
+            UIGenFlag flag = gObj.GetComponent<UIGenFlag>();
+            if (flag)   childFlags.Add(flag);
+
+            foreach (Transform childTrans in gObj.transform)
+            {
+                UIPanelRoot subRoot = childTrans.GetComponent<UIPanelRoot>();
+                if (subRoot)    continue;
+
+                if (childTrans.childCount > 0)
+                    findBuildComponent(childTrans.gameObject , childFlags);
+                else
+                {
+                    flag = childTrans.GetComponent<UIGenFlag>();
+                    if (flag) childFlags.Add(flag);
+                }
+            }
+        }
+
+        private void writeScriptFile(StringBuilder buf , List<UIGenFlag> flags)
+        {
+            foreach (UIGenFlag flag in flags)
+                buf.AppendLine(formatExport(flag));
+
             string path = Path.Combine(Application.dataPath, this.FilePath);
             string folder = Path.GetDirectoryName(path);
   
@@ -105,7 +106,7 @@ namespace UIHelper
             string fileText = File.ReadAllText(tempPath);
 
             fileText = fileText.Replace("#SCRIPTNAME#", Path.GetFileNameWithoutExtension(path));
-            fileText = fileText.Replace("#WIDGETS#", viewPanel);
+            fileText = fileText.Replace("#WIDGETS#", buf.ToString());
 
             File.WriteAllText(path , fileText);
         }
@@ -146,6 +147,56 @@ namespace UIHelper
             return buf.ToString();
         }
 
+        /// <summary>
+        /// 序列化UIPanelRoot的配置数据
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        public void serializePanelRoot(XmlDocument doc , List<UIGenFlag> flags)
+        {
+            XmlNode rootNodes = doc.SelectSingleNode("panelRoots");
+            if (rootNodes == null)
+            {
+                rootNodes = doc.CreateElement("panelRoots");
+                doc.AppendChild(rootNodes);
+            }
+            XmlElement ele = doc.CreateElement("panelRoot");
+            ele.SetAttribute("filePath", this.FilePath);
+            ele.SetAttribute("hierarchy", string.IsNullOrEmpty(relativePath) ? this.gameObject.name : relativePath);
+            
+            foreach (UIGenFlag flag in flags)
+            {
+                XmlElement flagEle = doc.CreateElement("flag");
+                flag.serializeFlag(flagEle);
+                ele.AppendChild(flagEle);
+            }
+            rootNodes.AppendChild(ele);
+        }
+
+        /// <summary>
+        /// 反序列化记录数据
+        /// </summary>
+        /// <param name="doc"></param>
+        public void deserializePanelRoot(XmlElement ele)
+        {
+            this.FilePath = ele.GetAttribute("filePath");
+
+            foreach (XmlElement childEle in ele.ChildNodes)
+            {
+                string hierarchy = childEle.GetAttribute("hierarchy");
+                hierarchy = hierarchy.Replace(".", "/");
+                Transform trans = this.transform.FindChild(hierarchy);
+                if (trans == null)  continue;
+
+                UIGenFlag flag = trans.GetComponent<UIGenFlag>();
+                if (flag == null)
+                    flag = trans.gameObject.AddComponent<UIGenFlag>();
+                flag.deserializeFlag(childEle);
+            }
+        }
+
     }
 
 }
+
+#endif

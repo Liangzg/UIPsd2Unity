@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	public class PSDExporter
 	{

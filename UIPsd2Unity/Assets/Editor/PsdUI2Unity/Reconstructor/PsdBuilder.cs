@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using PhotoshopFile;
+using UIHelper;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	public class PsdBuilder
 	{
@@ -239,6 +242,9 @@ namespace subjectnerdagreement.psdexport
             
             BuildPsd(spriteObject, rootGroup, settings, fileInfo, align, constructor);
 
+            //bind gen flag
+            bindGenFlags(spriteObject);
+
             return spriteObject;
         }
 
@@ -375,6 +381,46 @@ namespace subjectnerdagreement.psdexport
 			return GetPivot(align);
 		}
 
-#endregion
-	}
+        #endregion
+
+        #region --------------Gen Flag Option---------------------------
+        /// <summary>
+        /// 绑定结点操作的标志
+        /// </summary>
+        /// <param name="root"></param>
+	    private static void bindGenFlags(GameObject root)
+	    {
+            string genDir = Path.Combine(Application.dataPath, ToolConst.GenLogFolder);
+            string filePath = Path.Combine(genDir, root.name + ".xml");
+            if (!File.Exists(filePath))
+            {
+                Debug.LogWarning("Cant find file . File path is " + filePath);
+                return;
+            }
+
+            string text = File.ReadAllText(filePath);
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(text);
+
+            XmlNode rootNodes = doc.SelectSingleNode("panelRoots");
+            foreach (XmlNode childNode in rootNodes.ChildNodes)
+            {
+                XmlElement panelEle = (XmlElement)childNode;
+                string hierarchy = panelEle.GetAttribute("hierarchy");
+                if (string.IsNullOrEmpty(hierarchy) || hierarchy == root.gameObject.name)
+                {
+                    UIPanelRoot panelRoot = LayerWordBinder.swapComponent<UIPanelRoot>(root);
+                    panelRoot.deserializePanelRoot(panelEle);
+                }
+                else
+                {
+                    hierarchy = hierarchy.Replace(".", "/");
+                    GameObject child = root.transform.FindChild(hierarchy).gameObject;
+                    UIPanelRoot panelRoot = LayerWordBinder.swapComponent<UIPanelRoot>(child);
+                    panelRoot.deserializePanelRoot(panelEle);
+                }
+            }
+        }
+        #endregion
+    }
 }

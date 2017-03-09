@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 
     public class Word
@@ -130,30 +130,6 @@ namespace subjectnerdagreement.psdexport
             parseMap[layerName] = words;
 
             return words;
-        }
-
-
-        public static string[] GetTextureExportPath(string layerName)
-        {
-            List<Word> words = ParseLayerName(layerName);
-            PsdSetting setting = PsdSetting.Instance;
-            foreach (Word word in words)
-            {
-                if(!word.TypeAndParams.ContainsKey("img"))   continue;
-
-                string paramStr = word.TypeAndParams["img"];
-                string[] imgInfo = paramStr.Split('_'); //asset type
-
-                string assetFolder = setting.GetAssetFolder(imgInfo[0]);
-                string assetName = assetFolder == setting.DefaultImportPath ? paramStr : paramStr.Substring(imgInfo[0].Length + 1);
-                return new []{assetName,assetFolder};
-            }
-
-            return new []
-            {
-                layerName,
-                setting.DefaultImportPath
-            };
         }
 
         private static bool checkEnd(char[] charArr, int nextIndex)

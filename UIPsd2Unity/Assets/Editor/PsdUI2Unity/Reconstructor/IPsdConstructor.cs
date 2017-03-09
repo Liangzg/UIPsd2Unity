@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	public interface IPsdConstructor
 	{

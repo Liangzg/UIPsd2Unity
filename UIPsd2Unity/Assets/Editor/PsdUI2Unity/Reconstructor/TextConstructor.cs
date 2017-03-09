@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
     public class TextConstructor : IPsdConstructor
     {

@@ -33,7 +33,7 @@ using UnityEngine;
 using UnityEditorInternal;
 using Object = UnityEngine.Object;
 
-namespace subjectnerdagreement.psdexport
+namespace EditorTool.PsdExport
 {
 	public class PSDEditorWindow : EditorWindow
 	{
