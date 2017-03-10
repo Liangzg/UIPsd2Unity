@@ -158,6 +158,7 @@ namespace EditorTool.PsdExport
 		private static Sprite SaveAsset(PsdExportSettings settings, Texture2D tex, int layer)
 		{
 			string assetPath = GetLayerFilename(settings, layer);
+		    if (assetPath == null) return null;
 
 			// Setup scaling variables
 			float pixelsToUnits = settings.PixelsToUnitSize;

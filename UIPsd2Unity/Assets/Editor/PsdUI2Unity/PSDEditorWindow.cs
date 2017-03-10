@@ -103,6 +103,14 @@ namespace EditorTool.PsdExport
 			}
 		}
 
+#if NGUI
+	    [MenuItem("NGUI/Build Folder Atlas")]
+	    private static void BuildFolderAltas()
+	    {
+	        UIAtlasFolderMaker.Instance.OnBuild();
+	    }
+#endif
+
         public static bool PsdAssetSelected
 		{
 			get
@@ -812,7 +820,12 @@ namespace EditorTool.PsdExport
 		private void ImportLayers()
 		{
 			PSDExporter.Export(settings, fileInfo);
-		}
+
+#if NGUI
+            //打开NGUI图集
+            UIAtlasFolderMaker.Instance.OnBuild();
+#endif
+        }
 #endregion
 
 #region Sprite creation

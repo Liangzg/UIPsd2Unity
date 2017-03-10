@@ -19,12 +19,18 @@ namespace EditorTool.PsdExport
             UISprite bgRectTrans = LayerWordBinder.findChildComponent<UISprite>(mainObj , "background");
             if (bgRectTrans != null)
             {
-                panelView.baseClipRegion = new Vector4(bgRectTrans.transform.localPosition.x , bgRectTrans.transform.localPosition.y ,
-                                                       bgRectTrans.width , bgRectTrans.height);
+//                panelView.baseClipRegion = new Vector4(bgRectTrans.transform.localPosition.x , bgRectTrans.transform.localPosition.y ,
+//                                                       bgRectTrans.width , bgRectTrans.height);
+                Vector3 ogrinPos = bgRectTrans.transform.localPosition;
+                panelView.baseClipRegion = new Vector4(0 , 0 , bgRectTrans.width , bgRectTrans.height);
+
+                //更新子结点的坐标
+                NHelper.TransformOffset(panelView.transform , ogrinPos, false);
+                panelView.transform.localPosition = ogrinPos;
             }
 
             GameObject viewportGObj = LayerWordBinder.CreateUIObject("viewport", mainObj);
-            GameObject contentGObj = LayerWordBinder.CreateUIObject("content", viewportGObj);
+            LayerWordBinder.CreateUIObject("content", viewportGObj);
 
             UIScrollBar hbar = LayerWordBinder.findChildComponent<UIScrollBar>(mainObj, "hbar");
             if (hbar != null)

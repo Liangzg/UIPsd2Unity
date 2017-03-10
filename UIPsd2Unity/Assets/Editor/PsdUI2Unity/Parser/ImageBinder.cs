@@ -21,14 +21,20 @@ namespace EditorTool.PsdExport
             PsdSetting setting = PsdSetting.Instance;
             foreach (Word word in words)
             {
-                if (!word.TypeAndParams.ContainsKey("img")) continue;
+                if (word.TypeAndParams.ContainsKey("img"))
+                {
+                    string paramStr = word.TypeAndParams["img"];
+                    string[] imgInfo = paramStr.Split('#'); //asset type
 
-                string paramStr = word.TypeAndParams["img"];
-                string[] imgInfo = paramStr.Split('#'); //asset type
-
-                string assetFolder = setting.GetAssetFolder(imgInfo[0]);
-                string assetName = assetFolder == setting.DefaultImportPath ? paramStr : paramStr.Substring(imgInfo[0].Length + 1);
-                return new[] { assetName, assetFolder };
+                    string assetFolder = setting.GetAssetFolder(imgInfo[0]);
+                    string assetName = assetFolder == setting.DefaultImportPath ? paramStr : paramStr.Substring(imgInfo[0].Length + 1);
+                    return new[] { assetName, assetFolder };                   
+                }
+                if (word.TypeAndParams.ContainsKey("tmpt"))
+                {
+                    //模板文件不导出
+                    return null;
+                }
             }
 
             return new[]

@@ -16,7 +16,7 @@ namespace EditorTool.PsdExport
             foreground.width = background.width - 10;
             foreground.height = background.height - 10;
             foreground.type = UIBasicSprite.Type.Sliced;
-            NGUITools.AddWidgetCollider(foreground.gameObject);
+            
 
             UIScrollBar scrollbar = LayerWordBinder.swapComponent<UIScrollBar>(mainObj);
             LayerWordBinder.NGUICopySprite(background.gameObject , mainObj , true);
@@ -26,6 +26,8 @@ namespace EditorTool.PsdExport
             scrollbar.foregroundWidget = foreground;
             scrollbar.value = 0.1f;
             scrollbar.barSize = 0.2f;
+
+            NGUITools.AddWidgetCollider(foreground.gameObject);
         }
 #endif
     }

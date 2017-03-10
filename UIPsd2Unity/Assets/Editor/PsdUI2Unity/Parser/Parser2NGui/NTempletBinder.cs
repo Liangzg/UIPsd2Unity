@@ -39,7 +39,7 @@ namespace EditorTool.PsdExport
 
         public override void ExitBinding(GameObject gObj, string args, string layerName)
         {
-//            GameObject.DestroyImmediate(gObj);
+            GameObject.DestroyImmediate(gObj);
         }
     }
 }

@@ -16,7 +16,9 @@ namespace UIHelper
             if (root == null) return;
 
             EditorGUIUtility.labelWidth = 120;
-//            EditorGUILayout.PropertyField(serializedObject.FindProperty("ScriptName"));
+            //            EditorGUILayout.PropertyField(serializedObject.FindProperty("ScriptName"));
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("LuaRequirePath"));
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("FilePath", GUILayout.Width(120)))

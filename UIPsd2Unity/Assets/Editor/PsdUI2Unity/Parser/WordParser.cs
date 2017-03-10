@@ -52,11 +52,8 @@ namespace EditorTool.PsdExport
                 if(word.TypeAndParams == null)  continue;
                 foreach (string key in word.TypeAndParams.Keys)
                 {
-                    if (key != "component")
-                        import = LayerWordBinder.GetParser(key);
-                    else
-                        import = LayerWordBinder.GetParser(word.TypeAndParams[key]);
-
+                    import = LayerWordBinder.GetParser(key);
+                    
                     if (import == null)
                     {
                         Debug.LogWarning("Cant parse context ! key :" + key + " , value:" + word.TypeAndParams[key]);
@@ -79,13 +76,8 @@ namespace EditorTool.PsdExport
                 if (word.TypeAndParams == null) continue;
                 foreach (string key in word.TypeAndParams.Keys)
                 {
-                    if (key != "component")
-                        import = LayerWordBinder.GetParser(key);
-                    else
-                        import = LayerWordBinder.GetParser(word.TypeAndParams[key]);
-
+                    import = LayerWordBinder.GetParser(key);
                     if (import == null) continue;
-
                     import.ExitBinding(context, word.TypeAndParams[key], layerName);
                 }
             }
@@ -156,11 +148,7 @@ namespace EditorTool.PsdExport
             foreach (string param in args)
             {
                 string[] paramInfo = param.Split(':');
-                if (paramInfo.Length < 2)
-                {
-                    throw new Exception("Cant identify params ! arg is " + param);
-                }
-                word.TypeAndParams[paramInfo[0]] = paramInfo[1];
+                word.TypeAndParams[paramInfo[0]] = paramInfo.Length >= 2 ? paramInfo[1]:"null";
             }
         }
 
@@ -174,7 +162,7 @@ namespace EditorTool.PsdExport
             string subStr = word.Context.Substring(1, index > 0 ? index : word.Context.Length - 1);
             string[] componentAndParams = subStr.Split(':');
             word.TypeAndParams = new Dictionary<string, string>();
-            word.TypeAndParams["component"] = componentAndParams[0];
+            word.TypeAndParams[componentAndParams[0]] = componentAndParams.Length >= 2 ? componentAndParams[1] : "null";
         }
 
 

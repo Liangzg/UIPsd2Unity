@@ -66,15 +66,12 @@ namespace EditorTool.PsdExport
                 text.fontSize = (int)layerText.FontSize;
                 text.transform.SetAsFirstSibling();
                 text.SetDimensions((int)layer.Rect.width, (int)layer.Rect.height);
-                text.text = layerText.Text.Replace("\r\n", "\n").Replace("\r", "");
                 if (layer.Rect.width < layer.Rect.height)
                 {
-                    char[] charArr = text.text.ToCharArray();
-                    StringBuilder buf = new StringBuilder();
-                    foreach (char c in charArr)
-                        buf.Append(c).AppendLine();
-                    text.text = buf.ToString().TrimEnd();
+                    //竖屏
+                    text.overflowMethod = UILabel.Overflow.ResizeHeight;
                 }
+                text.text = layerText.Text;
                 text.color = textColor;
                 text.MakePixelPerfect();
 #endif

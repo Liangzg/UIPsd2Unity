@@ -40,9 +40,15 @@ namespace EditorTool.PsdExport
 #if NGUI
 		    var uiImg = imageObject.AddComponent<UISprite>();
 		    string sprPath = PSDExporter.GetLayerFilename(this.layer);
+		    if (sprPath == null)
+		    {
+                Debug.LogWarning("Cant find sprite path . layer name :" +  this.layer.Name);
+		        return;
+		    }
 		    string spriteName = Path.GetFileNameWithoutExtension(sprPath);
 		    NAtlasHelper.UIAtlasData atlas = NAtlasHelper.FindSprite(spriteName);
-		    if (atlas != null) uiImg.atlas = atlas.mainAtlas;
+		    if (atlas != null)
+                uiImg.atlas = atlas.mainAtlas;		        
 		    else
 		    {
 		        uiImg.width = (int) layer.Rect.width;

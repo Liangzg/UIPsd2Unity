@@ -7,6 +7,21 @@ using UnityEngine;
 
 namespace EditorTool.PsdExport
 {
+
+    public class NHelper
+    {
+
+        public static void TransformOffset(Transform root, Vector3 offset , bool all)
+        {
+            foreach (Transform childTrans in root)
+            {
+                childTrans.localPosition -= offset;
+                if (all && childTrans.childCount > 0 )
+                    TransformOffset(childTrans , offset , all);
+            }
+        }
+    }
+
     public class NAtlasHelper
     {
         
@@ -14,8 +29,11 @@ namespace EditorTool.PsdExport
 
         public static void LoadAllAtlas(string atlasFolderPath)
         {
+            atlasPool.Clear();
+
             if (!atlasFolderPath.StartsWith("Assets"))
                 atlasFolderPath = string.Concat("Assets/", atlasFolderPath);
+
             string[] files = AssetDatabase.FindAssets("t:GameObject", new[] {atlasFolderPath});
 
             foreach (string fileGUID in files)
@@ -40,6 +58,7 @@ namespace EditorTool.PsdExport
                 return atlasData;
             }
 
+            Debug.LogWarning("<<NAtlas,FindSprite>> Cant find UIAtlas , spriteName:" + spriteName);
             return null;
         }
 
@@ -102,6 +121,8 @@ namespace EditorTool.PsdExport
         private static Dictionary<string , string> templetNameAndPaths = new Dictionary<string, string>(); 
         public static void LoadAllTemplet(string folderPath)
         {
+            if (folderPath == "Assets/") return;
+
             string[] templetGUIDArr = AssetDatabase.FindAssets("t:GameObject", new[] {folderPath});
             foreach (string fileGUID in templetGUIDArr)
             {

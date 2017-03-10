@@ -370,6 +370,8 @@ namespace EditorTool.PsdExport
 //			string layerPath = Path.Combine(directoryPath, layerFile);
 
             string[] exportNameAndPath = ImageBinder.GetTextureExportPath(layerName);
+		    if (exportNameAndPath == null) return null;
+
             string basePath = string.Format("Assets/{0}", exportNameAndPath[1]);
 			if (!Directory.Exists(basePath))
 			{
