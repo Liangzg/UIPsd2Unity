@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using PhotoshopFile.Text;
+using UnityEngine;
 
 namespace PhotoshopFile
 {
@@ -67,12 +69,14 @@ namespace PhotoshopFile
             get;
             private set;
         }
-
+        
         public double OutlineWidth
         {
             get;
             private set;
         }
+
+       public bool StrokeFlag { get; private set; }
 
         public uint StrokeColor
         {
@@ -152,6 +156,14 @@ namespace PhotoshopFile
                 OutlineWidth = 0f;
             }
 
+            try
+            {
+                StrokeFlag = TdTaParser.getBool(d, "StrokeFlag");
+            }
+            catch (Exception)
+            {
+            }
+            
             try
             {
                 StrokeColor = TdTaParser.getColor(d, "StrokeColor");

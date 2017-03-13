@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-using LuaInterface;
 
 namespace UIHelper
 {
@@ -12,7 +11,10 @@ namespace UIHelper
     {
 
         public string ScriptName;
-
+        /// <summary>
+        /// Lua加载文件的路径
+        /// </summary>
+        public string LuaRequirePath;
         public string FilePath = "";
 
         public int Depth = -1;
@@ -41,7 +43,7 @@ namespace UIHelper
 
             if (string.IsNullOrEmpty(FilePath))
             {
-                Debugger.LogError("请先配置PanelRoot导出的脚本文件路径! Hierarchy:" + relativePath);
+                Debug.LogError("请先配置PanelRoot导出的脚本文件路径! Hierarchy:" + relativePath);
                 return;
             }
 
@@ -56,7 +58,7 @@ namespace UIHelper
                 childPanel.BuildPanel(doc , root);
 
                 buf.AppendFormat("\t\t{{field=\"{0}\",path=\"{1}\",src = LuaScript}},\n",
-                             string.IsNullOrEmpty(childPanel.ScriptName) ? childPanel.gameObject.name : childPanel.ScriptName,
+                             string.IsNullOrEmpty(childPanel.LuaRequirePath) ? childPanel.FilePath : childPanel.LuaRequirePath,
                              childPanel.relativePath);
             }
             

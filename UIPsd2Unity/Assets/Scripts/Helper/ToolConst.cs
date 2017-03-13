@@ -8,7 +8,7 @@ namespace UIHelper
         /// <summary>
         /// Lua界面模块文件
         /// </summary>
-        public const string LuaPanelTempletPath = "Lua/UISystem/88-ToLua# Panel Script-Panel.lua.txt";
+        public const string LuaPanelTempletPath = "Editor/UITools/88-ToLua# Panel Script-Panel.lua.txt";
         /// <summary>
         /// 导出记录文件夹
         /// </summary>

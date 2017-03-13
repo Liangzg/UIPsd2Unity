@@ -28,12 +28,7 @@ namespace EditorTool.PsdExport
         {
             var layerText = layer.LayerText;
 
-            float a = ((layerText.FillColor & 0xFF000000U) >> 24) / 255f;
-            float r = ((layerText.FillColor & 0xFF0000U) >> 16) / 255f;
-            float g = ((layerText.FillColor & 0xFF00U) >> 8) / 255f;
-            float b = (layerText.FillColor & 0xFFU) / 255f;
-
-            Color textColor = new Color(r, g, b, a);
+            Color textColor = GetTextColor(layerText.FillColor);
             if (PsdSetting.Instance.curGUIType == GUIType.UGUI)
             {
                 Text text = spriteObject.AddComponent<Text>();
@@ -53,7 +48,8 @@ namespace EditorTool.PsdExport
             {
 #if NGUI
                 UILabel text = spriteObject.AddComponent<UILabel>();
-                text.overflowMethod = UILabel.Overflow.ShrinkContent;
+                //竖屏
+                text.overflowMethod = layer.Rect.width < layer.Rect.height ? UILabel.Overflow.ResizeHeight : UILabel.Overflow.ShrinkContent;
 
                 if (PsdSetting.Instance.DefaultFontPath.EndsWith(".ttf"))
                     text.trueTypeFont = AssetDatabase.LoadAssetAtPath<Font>(PsdSetting.Instance.DefaultFontPath);
@@ -66,16 +62,27 @@ namespace EditorTool.PsdExport
                 text.fontSize = (int)layerText.FontSize;
                 text.transform.SetAsFirstSibling();
                 text.SetDimensions((int)layer.Rect.width, (int)layer.Rect.height);
-                if (layer.Rect.width < layer.Rect.height)
+                if (layerText.StrokeFlag)
                 {
-                    //竖屏
-                    text.overflowMethod = UILabel.Overflow.ResizeHeight;
+                    text.effectStyle = UILabel.Effect.Outline;
+                    text.effectColor = GetTextColor(layerText.StrokeColor);
                 }
                 text.text = layerText.Text;
                 text.color = textColor;
+
                 text.MakePixelPerfect();
 #endif
             }
+        }
+
+        public static Color GetTextColor(uint color)
+        {
+            float a = ((color & 0xFF000000U) >> 24) / 255f;
+            float r = ((color & 0xFF0000U) >> 16) / 255f;
+            float g = ((color & 0xFF00U) >> 8) / 255f;
+            float b = (color & 0xFFU) / 255f;
+            
+            return new Color(r, g, b, a);
         }
 
 

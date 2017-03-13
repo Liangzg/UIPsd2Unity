@@ -20,6 +20,21 @@ namespace EditorTool.PsdExport
                     TransformOffset(childTrans , offset , all);
             }
         }
+
+
+        public static void TransformOffsetParent(Transform root, Transform childTrans , Vector3 offset)
+        {
+            Transform parentTrans = childTrans.parent;
+
+            foreach (Transform trans in parentTrans)
+            {
+                trans.localPosition -= offset;
+            }
+            parentTrans.localPosition += offset;
+            if (parentTrans == root) return;
+
+            TransformOffsetParent(root , parentTrans, offset);
+        }
     }
 
     public class NAtlasHelper

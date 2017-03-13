@@ -9,18 +9,19 @@ namespace EditorTool.PsdExport
         public override void StartBinding(GameObject gObj, string args, string layerName)
         {
             UIToggle toggleCom = LayerWordBinder.swapComponent<UIToggle>(gObj);
-            toggleCom.group = 1;
-            UIButton btn = gObj.AddComponent<UIButton>();
-            
+            toggleCom.@group = 1;
 
-            UISprite imgBtn = LayerWordBinder.findChildComponent<UISprite>(gObj, "background");
-            btn.tweenTarget = imgBtn.gameObject;
+            Transform bgTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "background");
+            UIWidget bgWidge = bgTrans.GetComponent<UIWidget>();
 
-            UISprite imgMark = LayerWordBinder.findChildComponent<UISprite>(gObj, "checkmark");
+            Transform imgMarkTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "checkmark");
+            UISprite imgMark = LayerWordBinder.swapComponent<UISprite>(imgMarkTrans.gameObject);
+            imgMark.SetDimensions(bgWidge.width , bgWidge.height);
+
             toggleCom.activeSprite = imgMark;
 
-            Vector3 orginPos = imgBtn.transform.localPosition;
-            NHelper.TransformOffset(gObj.transform , orginPos , true);
+            Vector3 orginPos = bgTrans.localPosition;
+            NHelper.TransformOffsetParent(gObj.transform , bgTrans, orginPos);
             gObj.transform.localPosition = orginPos;
 
             NGUITools.AddWidgetCollider(gObj);

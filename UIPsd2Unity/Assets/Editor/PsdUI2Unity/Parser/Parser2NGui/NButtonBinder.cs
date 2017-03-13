@@ -7,9 +7,12 @@ namespace EditorTool.PsdExport
 #if NGUI
         public override void StartBinding(GameObject gObj, string args, string layerName)
         {
-            
-            UIButton button = LayerWordBinder.swapComponent<UIButton>(gObj);
-            
+            UIButtonScale button = LayerWordBinder.swapComponent<UIButtonScale>(gObj);
+            LayerWordBinder.swapComponent<UIEventListener>(gObj);
+            button.pressed = Vector3.one * 0.8f;
+            //            UIButton button = LayerWordBinder.swapComponent<UIButton>(gObj);
+            //            button.pressed = Color.white;
+            //            button.hover = Color.white;
 
             UISprite imgBtn = gObj.GetComponent<UISprite>();
             if(imgBtn == null)
@@ -17,7 +20,7 @@ namespace EditorTool.PsdExport
 
             if (imgBtn != null)
             {
-                button.tweenTarget = imgBtn.gameObject;
+                //button.tweenTarget = imgBtn.gameObject;
                 Vector3 originPos = imgBtn.transform.localPosition;
                 NHelper.TransformOffset(gObj.transform, imgBtn.transform.localPosition, true);
                 gObj.transform.localPosition = originPos;

@@ -56,7 +56,7 @@ namespace EditorTool.PsdExport
                     
                     if (import == null)
                     {
-                        Debug.LogWarning("Cant parse context ! key :" + key + " , value:" + word.TypeAndParams[key]);
+                        Debug.LogWarning("Cant parse context ! key :" + key + " , layer:" + layerName);
                         continue;
                     }
 
@@ -148,7 +148,10 @@ namespace EditorTool.PsdExport
             foreach (string param in args)
             {
                 string[] paramInfo = param.Split(':');
-                word.TypeAndParams[paramInfo[0]] = paramInfo.Length >= 2 ? paramInfo[1]:"null";
+                string pArgs = "null";
+                if (paramInfo.Length > 1)
+                    pArgs = param.Substring(paramInfo[0].Length + 1);
+                word.TypeAndParams[paramInfo[0]] = pArgs;
             }
         }
 
@@ -160,9 +163,13 @@ namespace EditorTool.PsdExport
         {
             int index = word.Context.IndexOf("_");
             string subStr = word.Context.Substring(1, index > 0 ? index : word.Context.Length - 1);
-            string[] componentAndParams = subStr.Split(':');
+            string[] paramsArr = subStr.Split(':');
             word.TypeAndParams = new Dictionary<string, string>();
-            word.TypeAndParams[componentAndParams[0]] = componentAndParams.Length >= 2 ? componentAndParams[1] : "null";
+            string pArgs = "null";
+            if (paramsArr.Length > 1)
+                pArgs = subStr.Substring(paramsArr[0].Length + 1);
+
+            word.TypeAndParams[paramsArr[0]] = pArgs;
         }
 
 
@@ -176,7 +183,9 @@ namespace EditorTool.PsdExport
             if (newName.IndexOfAny(new[] {'[', ']'}) >= 0)
             {
                 newName = newName.Replace("[", "").Replace("]", "");
-                newName = newName.Split(':')[1];
+                string[] nameArr = newName.Split(':');
+                if (nameArr.Length > 1)
+                    newName = nameArr[1];                              
             }
             return newName;
         }

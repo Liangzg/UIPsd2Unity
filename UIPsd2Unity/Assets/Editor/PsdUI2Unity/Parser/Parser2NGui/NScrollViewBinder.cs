@@ -46,6 +46,42 @@ namespace EditorTool.PsdExport
                 scrollview.movement = UIScrollView.Movement.Vertical;
             }
         }
+
+
+        public override void ExitBinding(GameObject g, string args, string layerName)
+        {
+            foreach (Transform childTrans in g.transform)
+            {
+                if (childTrans.name.StartsWith("item"))
+                {
+                    reducePosition(childTrans);
+                }
+                LayerWordBinder.swapComponent<UIDragScrollView>(childTrans.gameObject);
+                NGUITools.AddWidgetCollider(childTrans.gameObject);
+            }
+        }
+
+        /// <summary>
+        /// 缩小滚动项的位置
+        /// </summary>
+        /// <param name="root"></param>
+        private void reducePosition(Transform root)
+        {
+            int x = int.MaxValue;
+            int y = int.MaxValue;
+            foreach (Transform child in root)
+            {
+                Vector3 locPos = child.localPosition;
+                x = locPos.x < x ? (int)locPos.x : x;
+                y = locPos.y < y ? (int) locPos.y : y;
+            }
+
+            Vector3 offset = new Vector3(x , y , 0);
+            foreach (Transform childTrans in root)
+                childTrans.localPosition -= offset;
+
+            root.localPosition += offset;
+        }
 #endif
     }
 }
