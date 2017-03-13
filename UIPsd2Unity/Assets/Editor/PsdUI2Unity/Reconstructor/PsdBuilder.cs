@@ -244,7 +244,7 @@ namespace EditorTool.PsdExport
 
             //bind gen flag
             bindGenFlags(spriteObject);
-
+         
             return spriteObject;
         }
 

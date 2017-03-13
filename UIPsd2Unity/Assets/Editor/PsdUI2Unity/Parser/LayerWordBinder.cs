@@ -82,13 +82,22 @@ namespace EditorTool.PsdExport
                 {
                     destTrans = childTrans;
                     break;
-                }else if (childTrans.childCount > 0)
-                {
-                    T  childCom = findChildComponent<T>(childTrans.gameObject, hierarchy);
-                    if (childCom)   return childCom;
                 }
             }
-            if (destTrans == null) return null;
+
+            //平级没有，才查找子结点
+            if (destTrans == null)
+            {
+                foreach (Transform childTrans in gObj.transform)
+                {
+                   if (childTrans.childCount > 0)
+                    {
+                        T childCom = findChildComponent<T>(childTrans.gameObject, hierarchy);
+                        if (childCom) return childCom;
+                    }
+                }
+                return null;
+            }
 
             return destTrans.GetComponent<T>();
         }

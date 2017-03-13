@@ -1,16 +1,12 @@
 #SCRIPTNAME# = {};
 local this = #SCRIPTNAME#;
---local #SCRIPTCTRL# = require("Controller/#SCRIPTCTRL#")
-local gameObject;
-local transform;
+local #SCRIPTCTRL# = require("Controller/#SCRIPTCTRL#")
 
 --由LuaBehaviour自动调用
 function #SCRIPTNAME#.Awake(obj)
-	gameObject = obj;
-	transform = obj.transform;
+	this.gameObject = obj
+	this.transform = obj.transform
 
-	--test
-	this.OnInit()
 end
 
 --由LuaBehaviour自动调用
@@ -23,7 +19,11 @@ function #SCRIPTNAME#.OnInit()
     this.widgets = {
 #WIDGETS#
     }
-	LuaUIHelper.bind(gameObject , #SCRIPTNAME#)
+
+	LuaUIHelper.bind(gameObject , #SCRIPTNAME# )
+
+    #SCRIPTCTRL#.view = this  --注入Controller
+    #SCRIPTCTRL#.OnInit()
 end
 
 --由LuaBehaviour自动调用
@@ -33,5 +33,5 @@ end
 
 --单击事件--
 function #SCRIPTNAME#.OnDestroy()
-
+    #SCRIPTCTRL#.OnDestroy()
 end

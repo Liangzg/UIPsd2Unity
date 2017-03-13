@@ -1,7 +1,7 @@
 
 local LuaButton = class("LuaButton")
 
-function LuaButton:bind( root , widget )
+function LuaButton:bind( root , widget , behaviour)
     local btn = root.gameObject:GetComponent(typeof(UIButton))
     tolua.setpeer(btn , self)
 
@@ -9,7 +9,7 @@ function LuaButton:bind( root , widget )
     self.gameObject = root.gameObject
 
     if widget.onClick then
-        EventDelegate.Add(btn.onClick , EventDelegate.Callback(widget.onClick))
+        behaviour:AddClick(root.gameObject , widget.onClick)
     else
         print("cant find button click !~")
     end

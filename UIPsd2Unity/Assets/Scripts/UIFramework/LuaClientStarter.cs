@@ -2,7 +2,10 @@
 using System.Collections;
 using LuaInterface;
 
-public class LuaClientStarter : MonoBehaviour {
+public class LuaClientStarter : MonoBehaviour
+{
+
+    public static LuaClientStarter instance;
 
     private LuaState lua;
     private LuaLoader loader;
@@ -11,6 +14,8 @@ public class LuaClientStarter : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
+        instance = this;
+
         loader = new LuaLoader();
         lua = new LuaState();
         this.OpenLibs();

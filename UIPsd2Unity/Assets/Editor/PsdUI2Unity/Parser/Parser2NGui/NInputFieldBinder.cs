@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace EditorTool.PsdExport
@@ -8,18 +9,26 @@ namespace EditorTool.PsdExport
 #if NGUI
         public override void StartBinding(GameObject mainObj, string args, string layerName)
         {
-            UISprite bgTrans = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background");
-            bgTrans.type = UIBasicSprite.Type.Sliced;
+            try
+            {
+                UISprite bgTrans = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background");
+                bgTrans.type = UIBasicSprite.Type.Sliced;
 
-            UILabel text = LayerWordBinder.findChildComponent<UILabel>(mainObj, "holder");
-            text.transform.localPosition -= bgTrans.transform.localPosition;
-            text.pivot = UIWidget.Pivot.Left ;
+                UILabel text = LayerWordBinder.findChildComponent<UILabel>(mainObj, "holder");
+                text.transform.localPosition -= bgTrans.transform.localPosition;
+                text.pivot = UIWidget.Pivot.Left ;
              
-            LayerWordBinder.NGUICopySprite(bgTrans.gameObject , mainObj , true);
-            NGUITools.AddWidgetCollider(mainObj);
+                LayerWordBinder.NGUICopySprite(bgTrans.gameObject , mainObj , true);
+                NGUITools.AddWidgetCollider(mainObj);
 
-            UIInput inputField = LayerWordBinder.swapComponent<UIInput>(mainObj);
-            inputField.label = text;
+                UIInput inputField = LayerWordBinder.swapComponent<UIInput>(mainObj);
+                inputField.label = text;
+            }
+            catch (Exception)
+            {
+                Debug.LogError(string.Format("[异常InputField:{0}] 请检查是否存在（被隐藏）background和holder组！ ", layerName));
+            }
+
         }
 #endif
     }

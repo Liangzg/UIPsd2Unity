@@ -1,20 +1,20 @@
 -- @Author: LiangZG
 -- @Date:   2017-02-28 10:13:57
--- @Last Modified time: 2017-03-07 19:47:36
+-- @Last Modified time: 2017-03-13 10:44:02
 
 
 local LuaInput = class("LuaInput")
 
-function LuaInput:bind( trans , widget )
+function LuaInput:bind( trans , widget ,behaviour)
     local input = trans.gameObject:GetComponent(typeof(UIInput))
     tolua.setpeer(input , self)
 
 	if widget.onChange then
-		EventDelegate.Add(input.onChange , EventDelegate.Callback(widget.onChange))
+        behaviour:AddValueChange(trans.gameObject , widget.onChange)
 	end
 
     if widget.onSubmit then
-        EventDelegate.Add(input.onSubmit , EventDelegate.Callback(widget.onSubmit))
+        behaviour:AddSubmit(trans.gameObject , widget.onSubmit)
     end
 
     return input

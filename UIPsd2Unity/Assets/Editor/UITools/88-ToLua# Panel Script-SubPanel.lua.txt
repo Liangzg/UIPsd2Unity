@@ -1,0 +1,31 @@
+-- @Author:
+-- @Desc :
+
+local #SCRIPTNAME# = class("#SCRIPTNAME#")
+--self.gameObject
+--self.transform
+
+function #SCRIPTNAME#:Awake()
+    self.widgets = {
+#WIDGETS#
+    }
+    LuaUIHelper.bind(self.gameObject , self)
+end
+
+
+function #SCRIPTNAME#:Start()
+
+end
+
+
+
+function #SCRIPTNAME#:OnClose()
+
+end
+
+
+function #SCRIPTNAME#:OnDestroy()
+
+end
+
+return #SCRIPTNAME#

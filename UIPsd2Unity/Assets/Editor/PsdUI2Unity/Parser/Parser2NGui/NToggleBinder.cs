@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace EditorTool.PsdExport
@@ -8,23 +9,31 @@ namespace EditorTool.PsdExport
 #if NGUI
         public override void StartBinding(GameObject gObj, string args, string layerName)
         {
-            UIToggle toggleCom = LayerWordBinder.swapComponent<UIToggle>(gObj);
-            toggleCom.@group = 1;
+            try
+            {
+                UIToggle toggleCom = LayerWordBinder.swapComponent<UIToggle>(gObj);
+                toggleCom.@group = 1;
 
-            Transform bgTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "background");
-            UIWidget bgWidge = bgTrans.GetComponent<UIWidget>();
+                Transform bgTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "background");
+                UIWidget bgWidge = bgTrans.GetComponent<UIWidget>();
 
-            Transform imgMarkTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "checkmark");
-            UISprite imgMark = LayerWordBinder.swapComponent<UISprite>(imgMarkTrans.gameObject);
-            imgMark.SetDimensions(bgWidge.width , bgWidge.height);
+                Transform imgMarkTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "checkmark");
+                UISprite imgMark = LayerWordBinder.swapComponent<UISprite>(imgMarkTrans.gameObject);
+                imgMark.SetDimensions(bgWidge.width , bgWidge.height);
 
-            toggleCom.activeSprite = imgMark;
+                toggleCom.activeSprite = imgMark;
 
-            Vector3 orginPos = bgTrans.localPosition;
-            NHelper.TransformOffsetParent(gObj.transform , bgTrans, orginPos);
-            gObj.transform.localPosition = orginPos;
+                Vector3 orginPos = bgTrans.localPosition;
+                NHelper.TransformOffsetParent(gObj.transform , bgTrans, orginPos);
+                gObj.transform.localPosition = orginPos;
 
-            NGUITools.AddWidgetCollider(gObj);
+                NGUITools.AddWidgetCollider(gObj);
+            }
+            catch (Exception)
+            {
+                Debug.LogError(string.Format("[异常Toggle:{0}] 请检查是否存在（被隐藏）background组！ ", layerName));
+            }
+
         }
 #endif
     }
