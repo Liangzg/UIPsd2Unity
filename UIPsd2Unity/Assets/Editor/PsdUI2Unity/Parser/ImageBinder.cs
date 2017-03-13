@@ -24,11 +24,16 @@ namespace EditorTool.PsdExport
                 if (word.TypeAndParams.ContainsKey("img"))
                 {
                     string paramStr = word.TypeAndParams["img"];
-                    string[] imgInfo = paramStr.Split('#'); //asset type
+                    if (paramStr.Contains("#"))
+                    {
+                        string[] imgInfo = paramStr.Split('#'); //asset type
 
-                    string assetFolder = setting.GetAssetFolder(imgInfo[0]);
-                    string assetName = assetFolder == setting.DefaultImportPath ? paramStr : paramStr.Substring(imgInfo[0].Length + 1);
-                    return new[] { assetName, assetFolder };                   
+                        string assetFolder = setting.GetAssetFolder(imgInfo[0]);
+                        string assetName = paramStr.Substring(imgInfo[0].Length + 1);
+                        return new[] { assetName, assetFolder };
+                    }
+
+                    return new[] { paramStr, setting.DefaultImportPath };                   
                 }
                 if (word.TypeAndParams.ContainsKey("tmpt"))
                 {

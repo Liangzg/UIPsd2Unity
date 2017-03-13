@@ -7,6 +7,10 @@ function #SCRIPTNAME#.Awake(obj)
 	this.gameObject = obj
 	this.transform = obj.transform
 
+	this.widgets = {
+#WIDGETS#
+	}
+	LuaUIHelper.bind(this.gameObject , #SCRIPTNAME# )
 end
 
 --由LuaBehaviour自动调用
@@ -16,12 +20,6 @@ end
 
 --由LuaBehaviour自动调用
 function #SCRIPTNAME#.OnInit()
-    this.widgets = {
-#WIDGETS#
-    }
-
-	LuaUIHelper.bind(gameObject , #SCRIPTNAME# )
-
     #SCRIPTCTRL#.view = this  --注入Controller
     #SCRIPTCTRL#.OnInit()
 end

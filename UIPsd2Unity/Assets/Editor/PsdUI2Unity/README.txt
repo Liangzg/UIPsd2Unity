@@ -1,8 +1,7 @@
 
 PsdUI2Unity  版本更新日志
 
-
-2017-3-11 v0.0.2
+2017-3-13 v0.0.2
 fixed:
 1.修改ignore数据结构解析
 
@@ -12,9 +11,11 @@ add:
 3.添加font关键字用于定义文本大小、描边及阴影
 4.添加texture大贴图支持
 5.添加UIDragScroll绑定
+6.添加组件绑定的异常提示
 
-modifi
+modified
 1.修改UIButton为EventListener
+2.修改结点查询的逻辑顺序
 
 
 2017-2-27 v0.0.1
