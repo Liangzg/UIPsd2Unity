@@ -77,7 +77,7 @@ namespace EditorTool.PsdExport
 			return wnd;
 		}
 #if NGUI
-        [MenuItem("NGUI/PSD Importer")]
+        [MenuItem("NGUI/PSD Importer" , false , 30)]
 #else
         [MenuItem("PSD/PSD Importer")]
 #endif
@@ -104,7 +104,7 @@ namespace EditorTool.PsdExport
 		}
 
 #if NGUI
-	    [MenuItem("NGUI/Build Folder Atlas")]
+	    [MenuItem("NGUI/Build Folder Atlas", false, 32)]
 	    private static void BuildFolderAltas()
 	    {
 	        UIAtlasFolderMaker.Instance.OnBuild();

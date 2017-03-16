@@ -30,18 +30,17 @@ namespace EditorTool.PsdExport
             {
                 bigTextDir = assetDir.folder;
                 if (!assetDir.folder.StartsWith(defaultPath))
-                    break;
-            }
-
-            
-            string[] textureArr = AssetDatabase.FindAssets("t:Texture2D", new[] {"Assets/" + bigTextDir});
-            foreach (string texGUID in textureArr)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(texGUID);
-                string fileName = Path.GetFileNameWithoutExtension(path);
-                if (fileName == imgName)
                 {
-                    return AssetDatabase.LoadAssetAtPath<Texture>(path);
+                    string[] textureArr = AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/" + bigTextDir });
+                    foreach (string texGUID in textureArr)
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(texGUID);
+                        string fileName = Path.GetFileNameWithoutExtension(path);
+                        if (fileName == imgName)
+                        {
+                            return AssetDatabase.LoadAssetAtPath<Texture>(path);
+                        }
+                    }
                 }
             }
             return null;

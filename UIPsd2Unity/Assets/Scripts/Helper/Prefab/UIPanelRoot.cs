@@ -107,7 +107,8 @@ namespace UIHelper
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
             string tempPath = Path.Combine(Application.dataPath, templetPath);
-            Dictionary<string, string> localWidgets = readLocalFile(path);
+            Dictionary<string, string> localWidgets = new Dictionary<string, string>();
+            string fileText = readLocalFile(path , localWidgets);
 
             StringBuilder buf = new StringBuilder();
             string src = "src=";
@@ -155,8 +156,10 @@ namespace UIHelper
                     buf.AppendLine(value);
             }
 
-            string fileText = File.ReadAllText(tempPath);
-
+            if (string.IsNullOrEmpty(fileText))
+            {
+                fileText = File.ReadAllText(tempPath);
+            }
             fileText = fileText.Replace("#SCRIPTNAME#", Path.GetFileNameWithoutExtension(path));
             fileText = fileText.Replace("#WIDGETS#", buf.ToString());
             if (!string.IsNullOrEmpty(this.Controller))
@@ -185,30 +188,49 @@ namespace UIHelper
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        private Dictionary<string, string> readLocalFile(string filePath)
+        private string readLocalFile(string filePath , Dictionary<string, string> localWidgets)
         {            
             Dictionary<string , string> localFile = new Dictionary<string, string>();
             if (File.Exists(filePath))
             {
                 string fileText = File.ReadAllText(filePath);
-                string[] fileLinearArr = fileText.Split(new []{"\r\n"} , StringSplitOptions.None);
+                fileText = fileText.Replace("\r\n", "\n");
+                string[] fileLinearArr = fileText.Split('\n');
                 bool start = false;
                 string startWidgets = "widgets = {";
-                string endStr = "end";
+                string endStr = "}";
                 string path = ",path=";
+                int startIndex = 0;
+                int endIndex = 0;
+
                 for (int i = 0; i < fileLinearArr.Length; i++)
                 {
-                    if (fileLinearArr[i].Contains(startWidgets)) start = true;
-                    if (start && fileLinearArr[i].Equals(endStr)) break;
-
+                    if (fileLinearArr[i].Contains(startWidgets))
+                    {
+                        startIndex = i;
+                        start = true;
+                    }
+                    if (start && fileLinearArr[i].Trim().Equals(endStr))
+                    {
+                        endIndex = i;
+                        break;
+                    }
+                    
                     if (fileLinearArr[i].Contains(path))
                     {
                         string[] kv = fileLinearArr[i].Split(new []{ path } , StringSplitOptions.None);
                         localFile[kv[0]] = fileLinearArr[i];                        
                     }
                 }
+
+
+                string[] newText = new string[fileLinearArr.Length - (endIndex - startIndex) + 2];
+                Array.Copy(fileLinearArr ,  0 , newText, 0 , startIndex + 1);
+                Array.Copy(fileLinearArr , endIndex , newText , startIndex + 2, fileLinearArr.Length - endIndex);
+                newText[startIndex + 1] = "#WIDGETS#";
+                return string.Join("\r\n" , newText);
             }
-            return localFile;
+            return null;
         }  
       
         private string formatExport(UIGenFlag genFlag)

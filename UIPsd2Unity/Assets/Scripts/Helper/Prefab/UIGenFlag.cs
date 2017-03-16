@@ -66,7 +66,11 @@ namespace UIHelper
             if(input)   types.Add(input.GetType().FullName);
 
             if (types.Count <= 0)
+            {
+                types.Add("GameObject");
                 types.Add("Transform");
+            }
+                
             return types;
         }
 

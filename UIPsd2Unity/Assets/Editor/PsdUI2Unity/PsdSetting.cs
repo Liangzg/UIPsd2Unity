@@ -105,7 +105,7 @@ namespace EditorTool.PsdExport
 
 #if UNITY_EDITOR && !SLUA_STANDALONE
 #if NGUI
-        [MenuItem("NGUI/Psd Importer Setting")]
+        [MenuItem("NGUI/Psd Importer Setting", false, 31)]
 #else
         [MenuItem("PSD/Setting")]
 #endif
