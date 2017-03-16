@@ -1,5 +1,5 @@
-#SCRIPTNAME# = {};
-local this = #SCRIPTNAME#;
+#SCRIPTNAME# = {}
+local this = #SCRIPTNAME#
 local #SCRIPTCTRL# = require("Controller/#SCRIPTCTRL#")
 
 --由LuaBehaviour自动调用

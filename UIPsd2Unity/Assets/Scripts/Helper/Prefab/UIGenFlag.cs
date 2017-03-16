@@ -28,7 +28,7 @@ namespace UIHelper
         /// </summary>
         public int Depth = -1;
 
-        private string relativeHierarchy;
+        public string relativeHierarchy;
 
         public string initRelativeHierarchy(GameObject root)
         {

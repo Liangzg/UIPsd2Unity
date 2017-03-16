@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -125,9 +126,17 @@ namespace UIHelper
                 buf.AppendLine(formatPanel);
             }
 
-                      
+            Dictionary<string , string> keys = new Dictionary<string, string>();
             foreach (UIGenFlag flag in flags)
             {
+                string field = string.IsNullOrEmpty(flag.Field) ? flag.gameObject.name : flag.Field;
+                string hierarchy = flag.initRelativeHierarchy(this.gameObject);
+                if (keys.ContainsKey(field))
+                {
+                    Debug.LogError(string.Format("PanelRoot have same field [\"{0}\"] ! hierarchy is \"{1}\" . Src [\"{2}\"]" , field , hierarchy , keys[field]));
+                }
+                keys[field] = hierarchy;
+
                 string format = formatExport(flag);
                 string[] formatArr = format.Split(new[] {pathFormat}, StringSplitOptions.None);
                 if (localWidgets.ContainsKey(formatArr[0]))
@@ -190,7 +199,6 @@ namespace UIHelper
         /// <returns></returns>
         private string readLocalFile(string filePath , Dictionary<string, string> localWidgets)
         {            
-            Dictionary<string , string> localFile = new Dictionary<string, string>();
             if (File.Exists(filePath))
             {
                 string fileText = File.ReadAllText(filePath);
@@ -219,7 +227,7 @@ namespace UIHelper
                     if (fileLinearArr[i].Contains(path))
                     {
                         string[] kv = fileLinearArr[i].Split(new []{ path } , StringSplitOptions.None);
-                        localFile[kv[0]] = fileLinearArr[i];                        
+                        localWidgets[kv[0]] = fileLinearArr[i];                        
                     }
                 }
 
@@ -238,7 +246,7 @@ namespace UIHelper
             StringBuilder buf = new StringBuilder();
             buf.AppendFormat("\t\t{{field=\"{0}\",path=\"{1}\",", 
                              string.IsNullOrEmpty(genFlag.Field) ? genFlag.gameObject.name : genFlag.Field,
-                             genFlag.initRelativeHierarchy(this.gameObject) );
+                             genFlag.relativeHierarchy);
 
             if (genFlag.ScriptType == typeof(UILabel).FullName)
             {
