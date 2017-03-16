@@ -267,6 +267,13 @@ namespace UIHelper
             }else if (genFlag.ScriptType == typeof (UIInput).FullName)
             {
                 buf.Append("src=LuaInput, onChange = function (input) --[===[todo input change]===]  end , onSubmit = function (input) --[===[todo input onSubmit]===]  end");
+            }
+            else if (genFlag.ScriptType == typeof(UISlider).FullName)
+            {
+                buf.Append("src=LuaSlider, onValueChange = function (slider) --[===[todo change]===]  end ");
+            }else if (genFlag.ScriptType == typeof(UIScrollBar).FullName)
+            {
+                buf.Append("src=LuaScrollBar, onValueChange = function (scrollBar) --[===[todo change]===]  end ");
             }else 
             {
                 buf.AppendFormat("src=\"{0}\"", genFlag.ScriptType);
