@@ -167,7 +167,7 @@ namespace EditorTool.PsdExport
                 destImg.type = imgRoot.type;
                 destImg.depth = imgRoot.depth;
 
-                destImg.MakePixelPerfect();
+                destImg.SetDimensions(imgRoot.width , imgRoot.height);
 
                 GameObject.DestroyImmediate(src);
             }

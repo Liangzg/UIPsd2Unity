@@ -17,7 +17,6 @@ namespace EditorTool.PsdExport
                 imgBg.type = UIBasicSprite.Type.Sliced;
 
                 UISprite imgFill = LayerWordBinder.findChildComponent<UISprite>(mainObj, "fill");
-                imgFill.transform.localPosition -= imgBg.transform.localPosition;
                 imgFill.type = UIBasicSprite.Type.Sliced;
                 slider.foregroundWidget = imgFill;
 
@@ -28,9 +27,12 @@ namespace EditorTool.PsdExport
                     slider.thumb.localPosition -= imgBg.transform.localPosition;
                     imgFill.width = imgBg.width - imgHandle.width;
                 }
-                
 
+                Vector3 offset = imgBg.transform.localPosition;
+                NHelper.TransformOffset(mainObj.transform , offset , true);
                 LayerWordBinder.NGUICopySprite(imgBg.gameObject, mainObj, true);
+                mainObj.transform.localPosition = offset;
+
                 slider.backgroundWidget = mainObj.GetComponent<UIWidget>();
                 slider.value = 0.2f;
                 NGUITools.AddWidgetCollider(mainObj);

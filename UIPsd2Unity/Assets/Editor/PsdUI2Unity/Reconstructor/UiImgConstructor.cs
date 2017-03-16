@@ -48,12 +48,21 @@ namespace EditorTool.PsdExport
 		    string spriteName = Path.GetFileNameWithoutExtension(sprPath);
 		    NAtlasHelper.UIAtlasData atlas = NAtlasHelper.FindSprite(spriteName);
 		    if (atlas != null)
-                uiImg.atlas = atlas.mainAtlas;	
+		    {
+		        uiImg.atlas = atlas.mainAtlas;
+		        UISpriteData spriteData = uiImg.atlas.GetSprite(spriteName);
+		        if (spriteData.borderLeft != 0 || spriteData.borderRight != 0 ||
+                    spriteData.borderBottom != 0 || spriteData.borderTop != 0)
+		        {
+		            uiImg.type = UIBasicSprite.Type.Sliced; 
+		        }
+		    }	
             uiImg.spriteName = spriteName;
 		    uiImg.depth = layerIndex;
             uiImg.SetDimensions((int)layer.Rect.width , (int) layer.Rect.height);
             uiImg.transform.SetAsFirstSibling();
-//
+
+
 //            Vector2 sprPivot = PsdBuilder.GetPivot(settings);
 //            uiImg.pivot = NGUIMath.GetPivot(sprPivot);
 #else
