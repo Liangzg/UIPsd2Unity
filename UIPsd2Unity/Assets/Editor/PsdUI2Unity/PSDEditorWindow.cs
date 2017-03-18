@@ -77,7 +77,7 @@ namespace EditorTool.PsdExport
 			return wnd;
 		}
 #if NGUI
-        [MenuItem("NGUI/PSD Importer" , false , 30)]
+        [MenuItem("NGUI/PSD Importer")]
 #else
         [MenuItem("PSD/PSD Importer")]
 #endif
@@ -104,7 +104,7 @@ namespace EditorTool.PsdExport
 		}
 
 #if NGUI
-	    [MenuItem("NGUI/Build Folder Atlas", false, 32)]
+	    [MenuItem("NGUI/Build Folder Atlas")]
 	    private static void BuildFolderAltas()
 	    {
 	        UIAtlasFolderMaker.Instance.OnBuild();
@@ -284,7 +284,7 @@ namespace EditorTool.PsdExport
 
 			DrawImportField();
 
-			DrawImportSettings();
+//			DrawImportSettings();
 
 			DrawCreateEntry();
 
@@ -726,12 +726,12 @@ namespace EditorTool.PsdExport
 															typeof(Texture2D), false,
 															GUILayout.ExpandWidth(true));
 				bool changed = EditorGUI.EndChangeCheck();
-				if (changed)
-					Image = img;
+			    if (changed)
+                    Image = img;
 			}
 		}
 
-		private bool showImportSettings;
+		private bool showImportSettings = false;
 
 		private void DrawImportSettings()
 		{

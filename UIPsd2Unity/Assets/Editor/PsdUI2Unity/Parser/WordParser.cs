@@ -33,7 +33,7 @@ namespace EditorTool.PsdExport
     /// </summary>
     public class WordParser
     {
-        public static Dictionary<string , List<Word>> parseMap = new Dictionary<string, List<Word>>();
+        private static Dictionary<string , List<Word>> parseMap = new Dictionary<string, List<Word>>();
         /// <summary>
         /// 解析
         /// </summary>
@@ -91,11 +91,12 @@ namespace EditorTool.PsdExport
             char[] charArr = layerName.ToCharArray();
             int index = 0;
             StringBuilder buf = new StringBuilder();
+            //切分字符
             List<Word> words = new List<Word>();
             while (index < charArr.Length)
             {
                 buf.Append(charArr[index]);
-                if (checkEnd(charArr, index + 1) && buf.Length > 1)
+                if (checkEnd(charArr, index + 1) && buf.Length > 0)
                 {
                     Word newWord = new Word();
                     newWord.Context = buf.ToString().TrimEnd();
@@ -189,6 +190,7 @@ namespace EditorTool.PsdExport
             }
             return newName;
         }
+
     }
 
 

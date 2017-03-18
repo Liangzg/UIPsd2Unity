@@ -18,7 +18,8 @@ namespace EditorTool.PsdExport
                 UIWidget bgWidge = bgTrans.GetComponent<UIWidget>();
 
                 Transform imgMarkTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "checkmark");
-                UISprite imgMark = LayerWordBinder.swapComponent<UISprite>(imgMarkTrans.gameObject);
+                UIWidget imgMark = LayerWordBinder.swapComponent<UIWidget>(imgMarkTrans.gameObject);
+                imgMark.depth = bgWidge.depth + 1;
                 imgMark.SetDimensions(bgWidge.width , bgWidge.height);
 
                 toggleCom.activeSprite = imgMark;
