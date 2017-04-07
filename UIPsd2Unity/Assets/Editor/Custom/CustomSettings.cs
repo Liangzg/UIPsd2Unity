@@ -152,6 +152,7 @@ public static class CustomSettings
        _GT(typeof(UIGrid)),
        _GT(typeof(EventDelegate)),
        _GT(typeof(UIEventListener)),
+       _GT(typeof(UIWrapContent)),
 #endif
 
        _GT(typeof(LuaFramework.LuaBehaviour)),

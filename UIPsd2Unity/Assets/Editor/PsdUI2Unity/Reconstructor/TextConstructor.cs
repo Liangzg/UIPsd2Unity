@@ -70,7 +70,7 @@ namespace EditorTool.PsdExport
                 text.text = layerText.Text;
                 text.color = textColor;
 
-                text.MakePixelPerfect();
+//                text.MakePixelPerfect();
 #endif
             }
         }

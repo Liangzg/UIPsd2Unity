@@ -169,6 +169,8 @@ public class UIAtlasFolderMaker {
 
 	void UpdateAtlas (UIAtlas atlas , List<Texture> textures, bool keepSprites)
 	{
+	    NGUISettings.atlas = atlas;
+
 		// Create a list of sprites using the collected textures
 		List<UIAtlasMaker.SpriteEntry> sprites = UIAtlasMaker.CreateSprites(textures);
 
@@ -214,26 +216,11 @@ public class UIAtlasFolderMaker {
 	    foreach (string folderDir in childFolderArr)
 	    {
             string dir = folderDir.Replace("\\", "/");
-	        string folderName = Path.GetFileNameWithoutExtension(dir + ".xx");
-            string atlasPath = Path.Combine(PsdSetting.Instance.AtlasImportFolder, folderName + ".prefab");
-	        atlasPath = atlasPath.Replace("\\", "/");
-            
-            List<Texture> textures = GetSelectedTextures(folderDir , true);
-            UIAtlas atlas = createAtlas(atlasPath);
-            atlasList.Add(atlas);
-            UpdateAtlas(atlas , textures, false);
-            
+            this.updateFolderAtlas(dir);
         }
 
         //根目录
-        string rootfolderName = Path.GetFileNameWithoutExtension(rootFolderPath + ".xx");
-        string atlasRootPath = Path.Combine(PsdSetting.Instance.AtlasImportFolder, rootfolderName + ".prefab");
-        atlasRootPath = atlasRootPath.Replace("\\", "/");
-
-        List<Texture> rootTextures = GetSelectedTextures(rootFolderPath, false);
-        UIAtlas atlasRoot = createAtlas(atlasRootPath);
-        atlasList.Add(atlasRoot);
-        UpdateAtlas(atlasRoot, rootTextures, false);
+        this.updateFolderAtlas(rootFolderPath);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -244,6 +231,10 @@ public class UIAtlasFolderMaker {
     {
         NGUISettings.currentPath = System.IO.Path.GetDirectoryName(path);
         GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
+        if (go != null)
+        {
+            return go.GetComponent<UIAtlas>();
+        }
         string matPath = path.Replace(".prefab", ".mat");
 
         // Try to load the material
@@ -281,5 +272,30 @@ public class UIAtlasFolderMaker {
         // Select the atlas
         go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
         return go.GetComponent<UIAtlas>();
+    }
+
+    //更新文件夹Atlas
+    private void updateFolderAtlas(string folderPath)
+    {
+        string rootfolderName = Path.GetFileNameWithoutExtension(folderPath + ".xx");
+        string atlasRootPath = Path.Combine(PsdSetting.Instance.AtlasImportFolder, rootfolderName + ".prefab");
+        atlasRootPath = atlasRootPath.Replace("\\", "/");
+
+        List<Texture> rootTextures = GetSelectedTextures(folderPath, false);
+        UIAtlas atlasRoot = null;
+        if (!File.Exists(atlasRootPath))
+        {
+            atlasRoot = createAtlas(atlasRootPath);
+            atlasList.Add(atlasRoot);
+            UpdateAtlas(atlasRoot, rootTextures, false);
+        }
+        else
+        {
+            atlasRoot = AssetDatabase.LoadAssetAtPath<UIAtlas>(atlasRootPath);
+            atlasList.Add(atlasRoot);
+            UpdateAtlas(atlasRoot, rootTextures, true);
+//            NGUIEditorTools.UpgradeTexturesToSprites(atlasRoot);
+        }
+        
     }
 }
