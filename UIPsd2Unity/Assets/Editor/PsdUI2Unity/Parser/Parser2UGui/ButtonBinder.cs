@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using LuaFramework;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace EditorTool.PsdExport
@@ -10,6 +11,7 @@ namespace EditorTool.PsdExport
             Button button = LayerWordBinder.swapComponent<Button>(gObj);
             Image imgBtn = LayerWordBinder.findChildComponent<Image>(gObj, "imgBtn");
             button.targetGraphic = imgBtn;
+
         }
 
     }

@@ -77,7 +77,7 @@ namespace EditorTool.PsdExport
 			return wnd;
 		}
 #if NGUI
-        [MenuItem("NGUI/PSD Importer")]
+        [MenuItem("NGUI/PSD Importer", false, 30)]
 #else
         [MenuItem("PSD/PSD Importer")]
 #endif
@@ -104,7 +104,7 @@ namespace EditorTool.PsdExport
 		}
 
 #if NGUI
-	    [MenuItem("NGUI/Build Folder Atlas")]
+	    [MenuItem("NGUI/Build Folder Atlas", false, 30)]
 	    private static void BuildFolderAltas()
 	    {
 	        UIAtlasFolderMaker.Instance.OnBuild();
@@ -216,7 +216,7 @@ namespace EditorTool.PsdExport
 		{
 			if (styleIsSetup)
 				return;
-			
+
 			icnFolder = EditorGUIUtility.FindTexture("Folder Icon");
 			icnTexture = EditorGUIUtility.FindTexture("Texture Icon");
 		    icnText = EditorGUIUtility.FindTexture("TextAsset Icon");
@@ -382,7 +382,7 @@ namespace EditorTool.PsdExport
 		{
 			if (!isDragging || selectedGroup == null)
 				return;
-			
+
 			if (selectionRect.Contains(Event.current.mousePosition))
 			{
 				DragAndDrop.visualMode = DragAndDropVisualMode.Link;
@@ -470,7 +470,7 @@ namespace EditorTool.PsdExport
 			scrollViewRect = GUILayoutUtility.GetLastRect();
 
 			// Draw import button only when image is loaded
-			if (imageLoaded)
+			if (imageLoaded && false)
 			{
 				string importBtnText = string.Format("Import {0} Layer(s)", importCount);
 				if (GUILayout.Button(importBtnText, GUILayout.Height(25f)))
@@ -798,7 +798,7 @@ namespace EditorTool.PsdExport
 
 		private void PickExportPath()
 		{
-			string path = EditorUtility.SaveFolderPanel("Export Path", 
+			string path = EditorUtility.SaveFolderPanel("Export Path",
 				Path.Combine(Application.dataPath, settings.ExportPath), "");
 
 			if (string.IsNullOrEmpty(path))
@@ -858,7 +858,7 @@ namespace EditorTool.PsdExport
 					GUILayout.FlexibleSpace();
 					EditorGUIUtility.labelWidth = 65f;
 					createAlign = (SpriteAlignment)EditorGUILayout.EnumPopup("Alignment", createAlign);
-					GUILayout.FlexibleSpace();	
+					GUILayout.FlexibleSpace();
 				}
 			}
 
@@ -933,12 +933,12 @@ namespace EditorTool.PsdExport
 		        GameObject root = PsdBuilder.BuildPsdRoot(Selection.activeGameObject, settings, fileInfo, createAlign, uiConstructor);
 		        Selection.activeGameObject = root;
 		    }
-                
+
 
 //            DrawCreateExtensions();
 		}
 
-        
+
 
 		private void DrawCreateExtensions()
 		{

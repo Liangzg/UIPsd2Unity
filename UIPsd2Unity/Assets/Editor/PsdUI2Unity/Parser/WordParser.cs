@@ -143,7 +143,8 @@ namespace EditorTool.PsdExport
         /// <returns>返回字符总共的长度，包括括号本身</returns>
         private static void splitSquareBrackets(Word word)
         {
-            string subStr = word.Context.Substring(1, word.Context.Length - 2);
+            int index = word.Context.LastIndexOf("]");
+            string subStr = word.Context.Substring(1, index - 1);
             string[] args = subStr.TrimEnd().Split('|');
 
             foreach (string param in args)

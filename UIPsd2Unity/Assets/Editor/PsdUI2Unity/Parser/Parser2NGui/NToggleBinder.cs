@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace EditorTool.PsdExport
 {
@@ -34,7 +33,6 @@ namespace EditorTool.PsdExport
             {
                 Debug.LogError(string.Format("[异常Toggle:{0}] 请检查是否存在（被隐藏）background组！ ", layerName));
             }
-
         }
 #endif
     }

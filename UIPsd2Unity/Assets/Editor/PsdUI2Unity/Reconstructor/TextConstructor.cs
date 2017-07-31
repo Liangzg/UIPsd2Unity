@@ -49,7 +49,7 @@ namespace EditorTool.PsdExport
 #if NGUI
                 UILabel text = spriteObject.AddComponent<UILabel>();
                 //竖屏
-                text.overflowMethod = layer.Rect.width < layer.Rect.height ? UILabel.Overflow.ResizeHeight : UILabel.Overflow.ShrinkContent;
+                text.overflowMethod = layer.Rect.width < layer.Rect.height ? UILabel.Overflow.ResizeHeight : UILabel.Overflow.ResizeFreely;
 
                 if (PsdSetting.Instance.DefaultFontPath.EndsWith(".ttf"))
                     text.trueTypeFont = AssetDatabase.LoadAssetAtPath<Font>(PsdSetting.Instance.DefaultFontPath);
@@ -70,7 +70,13 @@ namespace EditorTool.PsdExport
                 text.text = layerText.Text;
                 text.color = textColor;
 
-//                text.MakePixelPerfect();
+                if (text.overflowMethod == UILabel.Overflow.ClampContent)
+                {
+                    NGUIEditorTools.RegisterUndo("Snap Dimensions", text);
+                    NGUIEditorTools.RegisterUndo("Snap Dimensions", text.transform);
+                    text.MakePixelPerfect();
+                }
+
 #endif
             }
         }

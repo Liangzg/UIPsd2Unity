@@ -34,11 +34,13 @@ namespace EditorTool.PsdExport
                 }
 
                 NGUITools.AddWidgetCollider(gObj);
+
             }
             catch (Exception)
             {
                 Debug.LogError(string.Format("[异常Button:{0}] 请检查是否存在（被隐藏）background组！ ", layerName));
             }
+            
 
         }
 #endif

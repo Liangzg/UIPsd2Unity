@@ -36,24 +36,7 @@ namespace EditorTool.PsdExport
             GUILayout.Label("GUI", GUILayout.MaxWidth(100));
             SerializedProperty guiType = serializedObject.FindProperty("curGUIType");
             guiType.enumValueIndex = EditorGUILayout.Popup(guiType.enumValueIndex, new[] {"NGUI", "UGUI"});
-
-            string scriptDefine = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-            if (guiType.enumValueIndex == 0)
-		    {
-		        if (!scriptDefine.ToLower().Contains("ngui"))
-		        {
-		            scriptDefine += ";NGUI";
-		            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup , scriptDefine);
-		        }
-		    }else if (guiType.enumValueIndex == 1)
-		    {
-		        if (scriptDefine.ToLower().Contains("ngui"))
-		        {
-		            scriptDefine = scriptDefine.Replace("NGUI", "");
-                    scriptDefine = scriptDefine.Replace(";;", ";");
-                    PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, scriptDefine);
-                }
-            }
+            m_PsdSetting.SetPsdDefine(guiType.enumValueIndex);
             EditorGUILayout.EndHorizontal();
 
             /////Default Import Path

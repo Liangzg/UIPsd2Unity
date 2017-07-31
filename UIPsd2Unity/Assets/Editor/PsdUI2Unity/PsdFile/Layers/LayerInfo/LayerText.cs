@@ -145,7 +145,15 @@ namespace PhotoshopFile
                 Underline = false;
             }
 
-            FillColor = TdTaParser.getColor(d, "FillColor");
+            try
+            {
+                FillColor = TdTaParser.getColor(d, "FillColor");
+            }
+            catch (Exception)
+            {
+                
+            }
+            
 
             try
             {

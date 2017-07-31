@@ -11,7 +11,7 @@ namespace EditorTool.PsdExport
         {
             UITexture mTexture = LayerWordBinder.swapComponent<UITexture>(gObj);
             UISprite sprte = gObj.GetComponent<UISprite>();
-            mTexture.mainTexture = this.findBigTexture(sprte.spriteName);
+            mTexture.baseTexture = this.findBigTexture(sprte.spriteName);
 
             mTexture.depth = sprte.depth;
             mTexture.width = sprte.width;
@@ -30,17 +30,18 @@ namespace EditorTool.PsdExport
             {
                 bigTextDir = assetDir.folder;
                 if (!assetDir.folder.StartsWith(defaultPath))
+                    break;
+            }
+
+            
+            string[] textureArr = AssetDatabase.FindAssets("t:Texture2D", new[] {"Assets/" + bigTextDir});
+            foreach (string texGUID in textureArr)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(texGUID);
+                string fileName = Path.GetFileNameWithoutExtension(path);
+                if (fileName == imgName)
                 {
-                    string[] textureArr = AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/" + bigTextDir });
-                    foreach (string texGUID in textureArr)
-                    {
-                        string path = AssetDatabase.GUIDToAssetPath(texGUID);
-                        string fileName = Path.GetFileNameWithoutExtension(path);
-                        if (fileName == imgName)
-                        {
-                            return AssetDatabase.LoadAssetAtPath<Texture>(path);
-                        }
-                    }
+                    return AssetDatabase.LoadAssetAtPath<Texture>(path);
                 }
             }
             return null;

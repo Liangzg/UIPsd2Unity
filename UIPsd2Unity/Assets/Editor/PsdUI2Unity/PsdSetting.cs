@@ -105,7 +105,7 @@ namespace EditorTool.PsdExport
 
 #if UNITY_EDITOR && !SLUA_STANDALONE
 #if NGUI
-        [MenuItem("NGUI/Psd Importer Setting", false, 31)]
+        [MenuItem("NGUI/Psd Importer Setting" , false , 30)]
 #else
         [MenuItem("PSD/Setting")]
 #endif
@@ -149,5 +149,30 @@ namespace EditorTool.PsdExport
             assetDirArr = newAssetDirs;
         }
 
+        /// <summary>
+        /// 设置PSD GUI环境域
+        /// </summary>
+        /// <param name="guiType"></param>
+        public void SetPsdDefine(int guiType)
+	    {
+            string scriptDefine = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            if (guiType == 0)
+            {
+                if (!scriptDefine.ToLower().Contains("ngui"))
+                {
+                    scriptDefine += ";NGUI";
+                    PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, scriptDefine);
+                }
+            }
+            else if (guiType == 1)
+            {
+                if (scriptDefine.ToLower().Contains("ngui"))
+                {
+                    scriptDefine = scriptDefine.Replace("NGUI", "");
+                    scriptDefine = scriptDefine.Replace(";;", ";");
+                    PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, scriptDefine);
+                }
+            }
+        }
 	}
 }

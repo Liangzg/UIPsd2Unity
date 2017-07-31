@@ -9,7 +9,16 @@ namespace EditorTool.PsdExport
         {
             UILabel lab = gObj.GetComponent<UILabel>();
             string[] argArr = args.Split(',');
-            lab.fontSize = Convert.ToInt32(argArr[0]); //fontSize
+            try
+            {
+                lab.fontSize = Convert.ToInt32(argArr[0]); //fontSize
+            }
+            catch (Exception)
+            {
+                Debug.LogError(layerName);
+                throw;
+            }
+            
 
             if (argArr.Length == 1) return;
 
