@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
 using System.Globalization;
+using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace PhotoshopFile.Text
 {
@@ -19,9 +20,12 @@ namespace PhotoshopFile.Text
         public static Dictionary<string, object> getDict(object tree, string selector) { return (Dictionary<string, object>)query(tree, selector); }
         public static List<object> getList(object tree, string selector) { return (List< object>)query(tree, selector); }
         public static string getString(object tree, string selector) { return (string)query(tree, selector); }
+
+        public static int getIntger(object tree, string selector) { return (int)query(tree, selector); }
+
         public static bool getBool(object tree, string selector) { return (bool)query(tree, selector); }
 
-		public static uint getColor(object tree, string selector)
+		public static Color getColor(object tree, string selector)
 		{
 			//Get the color object
 			Dictionary<string, object> d = getDict(tree, selector);
@@ -29,13 +33,9 @@ namespace PhotoshopFile.Text
 			Debug.Assert((int)d["Type"] == 1);
 			//Get the array of values
 			List<object> values = d["Values"] as List<object>;
-			uint color = 0;
-			for (int i = 0; i < 4; ++i)
-			{
-				color = color * 256 + (uint)((double)values[i] * 255 + 0.5f);
-			}
-			return color;
-		}
+            return Util.FromArgb((int)((double)values[0] * 255), (int)((double)values[1] * 255),
+                                 (int)((double)values[2] * 255), (int)((double)values[3] * 255));
+        }
         /// <summary>
         /// Navigates a tree, returning the selected object. supports dot and array notation. A trailing $ means to convert the byte array to a string.
         /// Objects can be primitive types, byte[] arrays, Dict(string,object), or List(objct)

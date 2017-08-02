@@ -113,21 +113,15 @@ namespace PhotoshopFile
 
 		public List<LayerInfo> AdditionalInfo { get; set; }
 
-		public bool IsText
-		{
-			get;
-			private set;
-		}
+        public bool IsText { get; private set; }
 
-		public LayerText LayerText
-		{
-			get;
-			private set;
-		}
+        public LayerText LayerText { get; private set; }
 
-		///////////////////////////////////////////////////////////////////////////
+        public EffectsLayer Effects { get; private set; }
 
-		public Layer(PsdFile psdFile)
+        ///////////////////////////////////////////////////////////////////////////
+
+        public Layer(PsdFile psdFile)
 		{
 			IsText = false;
 			PsdFile = psdFile;
@@ -200,7 +194,10 @@ namespace PhotoshopFile
 						IsText = true;
 						LayerText = (LayerText)adjustmentInfo;
 						break;
-				}
+                    case "lrFX":
+                        Effects = (EffectsLayer)adjustmentInfo;
+                        break;
+                }
 			}
 
 		}

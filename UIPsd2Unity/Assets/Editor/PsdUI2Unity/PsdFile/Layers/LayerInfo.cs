@@ -47,7 +47,10 @@ namespace PhotoshopFile
 				case "tySH":
 					result = new LayerTextType(reader);
 					break;
-				default:
+                case "lrFX":
+                    result = new EffectsLayer(reader, key);
+                    break;
+                default:
 					result = new RawLayerInfo(reader, key, length);
 					break;
 			}

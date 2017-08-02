@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using PhotoshopFile.Text;
 using UnityEngine;
 
@@ -28,61 +29,31 @@ namespace PhotoshopFile
             }
         }
 
-        public string Text
-        {
-            get;
-            private set;
-        }
+        public string Text{get;private set;}
 
-        public double FontSize
-        {
-            get;
-            private set;
-        }
+        public double FontSize{get;private set;}
 
-        public string FontName
-        {
-            get;
-            private set;
-        }
+        public string FontName{get;private set;}
 
-        public bool FauxBold
-        {
-            get;
-            private set;
-        }
+        public bool FauxBold{get;private set;}
 
-        public bool FauxItalic
-        {
-            get;
-            private set;
-        }
+        public bool FauxItalic{get;private set;}
 
-        public bool Underline
-        {
-            get;
-            private set;
-        }
+        public bool Underline   {   get;private set; }
 
-        public uint FillColor
-        {
-            get;
-            private set;
-        }
+        public Color FillColor  {get;private set;}
         
-        public double OutlineWidth
-        {
-            get;
-            private set;
-        }
+        public double OutlineWidth  { get; private set; }
 
        public bool StrokeFlag { get; private set; }
 
-        public uint StrokeColor
-        {
-            get;
-            private set;
-        }
+        public Color StrokeColor { get; private set; }
+
+        public FontStyle Style { get; private set; }
+
+        public int FontBaseline { get; private set; }
+
+        public bool Strikethrough { get; private set; }
 
         public LayerText()
         {
@@ -108,7 +79,19 @@ namespace PhotoshopFile
             TxtDescriptor = DynVal.ReadDescriptor(reader); //Text descriptor
 
             // WarpVersion
-            reader.ReadUInt16(); //2 bytes, =1. For Photoshop 6.0.
+            ushort wrapVersion = reader.ReadUInt16(); //2 bytes, =1. For Photoshop 6.0.
+
+            // DescriptorVersion
+            uint wrapDescriptorVersion = reader.ReadUInt32();
+
+            DynVal warpDescriptor = DynVal.ReadDescriptor(reader);
+
+            //            double left = reader.ReadDouble();
+            //            double top = reader.ReadDouble();
+            //            double right = reader.ReadDouble();
+            //            double bottom = reader.ReadDouble();
+
+            byte[] datas = reader.ReadBytes((int)reader.BytesToEnd);
 
             engineData = (Dictionary<string, object>)TxtDescriptor.Children.Find(c => c.Name == "EngineData").Value;
             StylesheetReader = new TdTaStylesheetReader(engineData);
@@ -118,67 +101,56 @@ namespace PhotoshopFile
             FontName = TdTaParser.getString(StylesheetReader.getFontSet()[(int)TdTaParser.query(d, "Font")], "Name$");
             FontSize = (double)TdTaParser.query(d, "FontSize");
 
-            try
-            {
+            if (d.ContainsKey("FauxBold"))
                 FauxBold = TdTaParser.getBool(d, "FauxBold");
-            }
-            catch (KeyNotFoundException)
-            {
-                FauxBold = false;
-            }
-
-            try
-            {
+            if (d.ContainsKey("FauxItalic"))
                 FauxItalic = TdTaParser.getBool(d, "FauxItalic");
-            }
-            catch (KeyNotFoundException)
-            {
-                FauxItalic = false;
-            }
-
-            try
-            {
+            if (d.ContainsKey("Underline"))
                 Underline = TdTaParser.getBool(d, "Underline");
-            }
-            catch (KeyNotFoundException)
+            if (d.ContainsKey("StyleRunAlignment"))
             {
-                Underline = false;
+                int styleRunAlignment = (int)TdTaParser.query(d, "StyleRunAlignment");//No idea what this maps to.
             }
 
-            try
-            {
+            FillColor = Color.black;
+            if (d.ContainsKey("FillColor"))
                 FillColor = TdTaParser.getColor(d, "FillColor");
-            }
-            catch (Exception)
-            {
-                
-            }
-            
-
-            try
-            {
+            if (d.ContainsKey("OutlineWidth"))
                 OutlineWidth = (double)TdTaParser.query(d, "OutlineWidth");
-            }
-            catch (KeyNotFoundException)
-            {
-                OutlineWidth = 0f;
-            }
-
-            try
-            {
+            if (d.ContainsKey("StrokeFlag"))
                 StrokeFlag = TdTaParser.getBool(d, "StrokeFlag");
-            }
-            catch (Exception)
-            {
-            }
-            
+            if (d.ContainsKey("StrokeColor"))
+                StrokeColor = TdTaParser.getColor(d, "StrokeColor");
+
+            if (d.ContainsKey("Strikethrough"))
+                Strikethrough = TdTaParser.getBool(d, "Strikethrough");
+            if (d.ContainsKey("FontBaseline"))
+                FontBaseline = TdTaParser.getIntger(d, "FontBaseline");
+
+            //Fix newlines
             try
             {
-                StrokeColor = TdTaParser.getColor(d, "StrokeColor");
+                //Remove MT
+                if (FontName.EndsWith("MT")) FontName = FontName.Substring(0, FontName.Length - 2);
+                //Remove -Bold, -Italic, -BoldItalic
+                if (FontName.EndsWith("-Bold", StringComparison.OrdinalIgnoreCase)) Style |= FontStyle.Bold;
+                if (FontName.EndsWith("-Italic", StringComparison.OrdinalIgnoreCase)) Style |= FontStyle.Italic;
+                if (FontName.EndsWith("-BoldItalic", StringComparison.OrdinalIgnoreCase)) Style |= FontStyle.Bold | FontStyle.Italic;
+                //Remove from FontName
+                FontName = new Regex("\\-(Bold|Italic|BoldItalic)$", RegexOptions.IgnoreCase | RegexOptions.IgnoreCase).Replace(FontName, "");
+                //Remove PS
+                if (FontName.EndsWith("PS")) FontName = FontName.Substring(0, FontName.Length - 2);
+                //Find font family
+
+                if (FauxBold) Style |= FontStyle.Bold;
+                if (FauxItalic) Style |= FontStyle.Italic;
+                //                    if (underline) style |= FontStyle.Underline;
+                //                    if (strikethrough) style |= FontStyle.Strikeout;
+
             }
-            catch (KeyNotFoundException)
+            finally
             {
-                StrokeColor = 0;
+
             }
         }
 
