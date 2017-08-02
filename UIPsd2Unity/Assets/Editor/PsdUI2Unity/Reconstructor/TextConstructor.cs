@@ -28,7 +28,7 @@ namespace EditorTool.PsdExport
         {
             var layerText = layer.LayerText;
 
-            Color textColor = GetTextColor(layerText.FillColor);
+            Color textColor = layerText.FillColor;
             if (PsdSetting.Instance.curGUIType == GUIType.UGUI)
             {
                 Text text = spriteObject.AddComponent<Text>();
@@ -58,17 +58,47 @@ namespace EditorTool.PsdExport
 
                 NGUISettings.ambigiousFont = text.trueTypeFont;
                 text.depth = layerIndex;
-                text.fontStyle = GetFontStyle(layerText);
-                text.fontSize = (int)layerText.FontSize;
+                text.fontStyle = layerText.Style;
+                if (text.fontStyle == FontStyle.Bold)   text.spacingX = 6;
+
+                text.fontSize = layerText.FontBaseline != 0 ? (int)layerText.FontSize / 2 : (int)layerText.FontSize;
                 text.transform.SetAsFirstSibling();
-                text.SetDimensions((int)layer.Rect.width, (int)layer.Rect.height);
-                if (layerText.StrokeFlag)
+                
+                if (layer.Effects != null)
                 {
-                    text.effectStyle = UILabel.Effect.Outline;
-                    text.effectColor = GetTextColor(layerText.StrokeColor);
+                    EffectsLayer effectLayer = layer.Effects;
+                    if (effectLayer.IsDropShadow)
+                    {
+                        text.effectStyle = UILabel.Effect.Shadow;
+                        text.effectColor = layer.Effects.DropShadow.ShadowColor;
+                    }
+                    if (effectLayer.IsOuterGlow)
+                    {
+                        text.effectStyle = UILabel.Effect.Outline;
+                        text.effectColor = layer.Effects.OuterGlow.Color;
+                    }
                 }
-                text.text = layerText.Text;
+
+                if (layerText.Underline)
+                {
+                    text.text = string.Format("[u]{0}[/u]", layerText.Text);
+                }else if (layerText.Strikethrough)
+                    text.text = string.Format("[s]{0}[/s]", layerText.Text);
+                else if (layerText.FontBaseline == 1)
+                    text.text = string.Format("[sub]{0}[/sub]", layerText.Text);
+                else if (layerText.FontBaseline == 2)
+                    text.text = string.Format("[sup]{0}[/sup]", layerText.Text);
+                else
+                    text.text = layerText.Text;
                 text.color = textColor;
+
+                int width = text.overflowMethod == UILabel.Overflow.ResizeHeight
+                    ? (int)Math.Max(text.fontSize, layer.Rect.width)
+                    : (int)layer.Rect.width;
+                int height = text.overflowMethod == UILabel.Overflow.ResizeHeight
+                    ? (int)layer.Rect.height
+                    : (int)Math.Max(text.fontSize, layer.Rect.height);
+                text.SetDimensions(width, (int)height);
 
                 if (text.overflowMethod == UILabel.Overflow.ClampContent)
                 {
@@ -80,17 +110,6 @@ namespace EditorTool.PsdExport
 #endif
             }
         }
-
-        public static Color GetTextColor(uint color)
-        {
-            float a = ((color & 0xFF000000U) >> 24) / 255f;
-            float r = ((color & 0xFF0000U) >> 16) / 255f;
-            float g = ((color & 0xFF00U) >> 8) / 255f;
-            float b = (color & 0xFFU) / 255f;
-            
-            return new Color(r, g, b, a);
-        }
-
 
         public static FontStyle GetFontStyle(LayerText layerText)
         {
