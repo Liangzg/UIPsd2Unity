@@ -23,7 +23,7 @@ namespace EditorTool.PsdExport
 
                 UISprite imgBtn = gObj.GetComponent<UISprite>();
                 if(imgBtn == null)
-                     imgBtn = LayerWordBinder.findChildComponent<UISprite>(gObj, "background");
+                     imgBtn = LayerWordBinder.findChildComponent<UISprite>(gObj, "background" , "bg");
 
                 if (imgBtn != null)
                 {

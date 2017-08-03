@@ -71,14 +71,21 @@ namespace EditorTool.PsdExport
             }
             return instance;
         }
-
-        public static T findChildComponent<T>(GameObject gObj, string hierarchy)
+        /// <summary>
+        /// 查找子结点的指定类型组件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="gObj"></param>
+        /// <param name="hierarchy">组件全名</param>
+        /// <param name="abbreviate">组件简化名称</param>
+        /// <returns></returns>
+        public static T findChildComponent<T>(GameObject gObj, string hierarchy , string abbreviate)
             where T : Component
         {
             Transform destTrans = null;
             foreach (Transform childTrans in gObj.transform)
             {
-                if (childTrans.name.StartsWith(hierarchy))
+                if (childTrans.name.StartsWith(hierarchy) || childTrans.name.StartsWith(abbreviate))
                 {
                     destTrans = childTrans;
                     break;
@@ -92,7 +99,7 @@ namespace EditorTool.PsdExport
                 {
                    if (childTrans.childCount > 0)
                     {
-                        T childCom = findChildComponent<T>(childTrans.gameObject, hierarchy);
+                        T childCom = findChildComponent<T>(childTrans.gameObject, hierarchy , abbreviate);
                         if (childCom) return childCom;
                     }
                 }

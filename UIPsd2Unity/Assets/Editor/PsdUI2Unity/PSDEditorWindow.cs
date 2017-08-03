@@ -908,15 +908,8 @@ namespace EditorTool.PsdExport
 
             using (new EditorGUILayout.VerticalScope())
             {
-                bool selectionOk = Selection.activeGameObject != null;
-                string btnText = "Select Build Root";
-                if (selectionOk)
-                {
-                    selectionOk = uiConstructor.CanBuild(Selection.activeGameObject);
-                    if (selectionOk)
-                        btnText = "Create UI Panel";
-                }
-
+                string btnText = "Create UI Panel";
+               
                 createAllUI = GUILayout.Button(btnText,
                                                 GUILayout.Height(30),
                                                 GUILayout.ExpandHeight(false));
@@ -930,7 +923,8 @@ namespace EditorTool.PsdExport
 				PsdBuilder.BuildPsd(Selection.activeGameObject, selectedGroup, settings, fileInfo, createAlign, uiConstructor);
 		    if (createAllUI)
 		    {
-		        GameObject root = PsdBuilder.BuildPsdRoot(Selection.activeGameObject, settings, fileInfo, createAlign, uiConstructor);
+                GameObject gObj = PsdBuilder.FindUIRoot();
+                GameObject root = PsdBuilder.BuildPsdRoot(gObj, settings, fileInfo, createAlign, uiConstructor);
 		        Selection.activeGameObject = root;
 		    }
 

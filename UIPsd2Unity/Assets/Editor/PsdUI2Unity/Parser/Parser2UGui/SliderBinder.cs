@@ -9,7 +9,7 @@ namespace EditorTool.PsdExport
         {
             Slider slider = LayerWordBinder.swapComponent<Slider>(mainObj);
 
-            Image imgBg = LayerWordBinder.findChildComponent<Image>(mainObj, "background");
+            Image imgBg = LayerWordBinder.findChildComponent<Image>(mainObj, "background" , "bg");
             imgBg.type = Image.Type.Sliced;
             slider.targetGraphic = imgBg;
 
@@ -23,7 +23,7 @@ namespace EditorTool.PsdExport
             sliderBgTrans.sizeDelta = Vector2.zero;
             sliderBgTrans.anchoredPosition3D = Vector3.zero;
 
-            slider.fillRect = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "fill");
+            slider.fillRect = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "fill" , "fl");
             if (slider.fillRect)
             {
                 GameObject fillRoot = LayerWordBinder.CreateUIObject("fillArea", mainObj);
@@ -44,7 +44,7 @@ namespace EditorTool.PsdExport
                 slider.fillRect.sizeDelta = new Vector2(10, 0);
             }
 
-            slider.handleRect = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "handle");
+            slider.handleRect = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "handle" , "ha");
             if (slider.handleRect)
             {
                 GameObject handleArea = LayerWordBinder.CreateUIObject("HandleSlideArea", mainObj);

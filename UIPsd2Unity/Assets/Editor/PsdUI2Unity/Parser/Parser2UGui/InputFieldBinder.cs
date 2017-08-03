@@ -7,10 +7,10 @@ namespace EditorTool.PsdExport
     {
         public void StartBinding(GameObject mainObj, string args, string layerName)
         {
-            Transform bgTrans = LayerWordBinder.findChildComponent<Transform>(mainObj, "background");
+            Transform bgTrans = LayerWordBinder.findChildComponent<Transform>(mainObj, "background" , "bg");
             LayerWordBinder.copyRectTransform(bgTrans.gameObject, mainObj, true);
 
-            Text holderText = LayerWordBinder.findChildComponent<Text>(mainObj, "holder");
+            Text holderText = LayerWordBinder.findChildComponent<Text>(mainObj, "holder" , "ho");
             if (holderText)
             {
                 RectTransform holderTrans = holderText.GetComponent<RectTransform>();

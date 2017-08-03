@@ -9,10 +9,10 @@ namespace EditorTool.PsdExport
         {
             Toggle toggle = LayerWordBinder.swapComponent<Toggle>(gObj);
 
-            Image imgBtn = LayerWordBinder.findChildComponent<Image>(gObj, "background");
+            Image imgBtn = LayerWordBinder.findChildComponent<Image>(gObj, "background" , "bg");
             toggle.image = imgBtn;
 
-            Image imgMark = LayerWordBinder.findChildComponent<Image>(gObj, "checkmark");
+            Image imgMark = LayerWordBinder.findChildComponent<Image>(gObj, "checkmark" , "cm");
             toggle.graphic = imgMark;
             toggle.isOn = true;
         }

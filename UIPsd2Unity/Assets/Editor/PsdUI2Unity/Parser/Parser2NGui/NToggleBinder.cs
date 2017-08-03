@@ -13,10 +13,10 @@ namespace EditorTool.PsdExport
                 UIToggle toggleCom = LayerWordBinder.swapComponent<UIToggle>(gObj);
                 toggleCom.@group = 1;
 
-                Transform bgTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "background");
+                Transform bgTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "background" , "bg");
                 UIWidget bgWidge = bgTrans.GetComponent<UIWidget>();
 
-                Transform imgMarkTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "checkmark");
+                Transform imgMarkTrans = LayerWordBinder.findChildComponent<Transform>(gObj, "checkmark" , "cm");
                 UIWidget imgMark = LayerWordBinder.swapComponent<UIWidget>(imgMarkTrans.gameObject);
                 imgMark.depth = bgWidge.depth + 1;
                 imgMark.SetDimensions(bgWidge.width , bgWidge.height);

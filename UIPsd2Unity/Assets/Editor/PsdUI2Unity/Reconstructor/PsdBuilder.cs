@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using PhotoshopFile;
 using UIHelper;
@@ -13,6 +14,22 @@ namespace EditorTool.PsdExport
 {
 	public class PsdBuilder
 	{
+
+	    public static GameObject FindUIRoot()
+	    {
+#if UGUI
+          Canvas rootCanvas = GameObject.FindObjectOfType<Canvas>();
+	      if (rootCanvas != null) return rootCanvas.gameObject;
+          return new GameObject("UIRoot(UGUI)");  
+#elif NGUI
+            UIRoot root = GameObject.FindObjectOfType<UIRoot>();
+            if(root == null)
+                NGUITools.CreateUI(false);
+	        return GameObject.FindObjectOfType<UICamera>().gameObject;
+#endif
+	        return null;
+	    }
+
 		#region convenience functions
 		public static void BuildUiImages(GameObject root, PSDLayerGroupInfo group,
 									PsdExportSettings settings, PsdFileInfo fileInfo,

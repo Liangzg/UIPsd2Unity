@@ -10,10 +10,10 @@ namespace EditorTool.PsdExport
         {
             try
             {
-                UISprite bgTrans = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background");
+                UISprite bgTrans = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background" , "bg");
                 bgTrans.type = UIBasicSprite.Type.Sliced;
 
-                UILabel text = LayerWordBinder.findChildComponent<UILabel>(mainObj, "holder");
+                UILabel text = LayerWordBinder.findChildComponent<UILabel>(mainObj, "holder" , "ho");
                 text.transform.localPosition -= bgTrans.transform.localPosition;
                 text.pivot = UIWidget.Pivot.Left ;
              

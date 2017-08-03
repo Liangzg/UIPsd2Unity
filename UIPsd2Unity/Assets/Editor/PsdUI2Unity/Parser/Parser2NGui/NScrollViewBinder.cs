@@ -18,7 +18,7 @@ namespace EditorTool.PsdExport
 
                 UIScrollView scrollview = LayerWordBinder.swapComponent<UIScrollView>(mainObj);
                 ogrinPos = Vector3.zero;
-                UISprite bgRectTrans = LayerWordBinder.findChildComponent<UISprite>(mainObj , "background");
+                UISprite bgRectTrans = LayerWordBinder.findChildComponent<UISprite>(mainObj , "background" , "bg");
                 if (bgRectTrans != null)
                 {
     //                panelView.baseClipRegion = new Vector4(bgRectTrans.transform.localPosition.x , bgRectTrans.transform.localPosition.y ,
@@ -32,14 +32,14 @@ namespace EditorTool.PsdExport
                 GameObject viewportGObj = LayerWordBinder.CreateUIObject("viewport", mainObj);
                 //LayerWordBinder.CreateUIObject("content", viewportGObj);
 
-                UIScrollBar hbar = LayerWordBinder.findChildComponent<UIScrollBar>(mainObj, "hbar");
+                UIScrollBar hbar = LayerWordBinder.findChildComponent<UIScrollBar>(mainObj, "hbar" , "hb");
                 if (hbar != null)
                 {
                     scrollview.horizontalScrollBar = hbar;
                     scrollview.movement = UIScrollView.Movement.Horizontal;
                 }
 
-                UIScrollBar vbar = LayerWordBinder.findChildComponent<UIScrollBar>(mainObj, "vbar");
+                UIScrollBar vbar = LayerWordBinder.findChildComponent<UIScrollBar>(mainObj, "vbar" , "vb");
                 if (vbar != null)
                 {
                     scrollview.verticalScrollBar = hbar;

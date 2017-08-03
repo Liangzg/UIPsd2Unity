@@ -7,7 +7,7 @@ namespace EditorTool.PsdExport
     {
         public void StartBinding(GameObject mainObj, string args, string layerName)
         {
-            Image oldImg = LayerWordBinder.findChildComponent<Image>(mainObj, "background");
+            Image oldImg = LayerWordBinder.findChildComponent<Image>(mainObj, "background" , "bg");
             LayerWordBinder.copyRectTransform(oldImg.gameObject, mainObj, true);
 
             GameObject sliderArea = LayerWordBinder.CreateUIObject("Sliding Area", mainObj);
@@ -16,7 +16,7 @@ namespace EditorTool.PsdExport
             sliderAreaRect.anchorMin = Vector2.zero;
             sliderAreaRect.anchorMax = Vector2.one;
 
-            RectTransform handleRect = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "handle");
+            RectTransform handleRect = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "handle" , "ha");
             handleRect.transform.SetParent(sliderArea.transform);
             handleRect.sizeDelta = new Vector2(20, 20);
             handleRect.anchoredPosition = Vector2.zero;

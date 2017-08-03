@@ -9,7 +9,7 @@ namespace EditorTool.PsdExport
         public void StartBinding(GameObject gObj, string args, string layerName)
         {
             Button button = LayerWordBinder.swapComponent<Button>(gObj);
-            Image imgBtn = LayerWordBinder.findChildComponent<Image>(gObj, "imgBtn");
+            Image imgBtn = LayerWordBinder.findChildComponent<Image>(gObj, "background" , "bg");
             button.targetGraphic = imgBtn;
 
         }

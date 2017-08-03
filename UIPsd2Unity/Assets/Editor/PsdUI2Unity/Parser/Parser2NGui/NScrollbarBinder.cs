@@ -10,10 +10,10 @@ namespace EditorTool.PsdExport
         {
             try
             {
-                UISprite background = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background");
+                UISprite background = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background" , "bg");
                 background.type = UIBasicSprite.Type.Sliced;
 
-                UISprite foreground = LayerWordBinder.findChildComponent<UISprite>(mainObj, "handle");
+                UISprite foreground = LayerWordBinder.findChildComponent<UISprite>(mainObj, "handle" , "ha");
                 foreground.transform.localPosition = Vector3.zero;
                 foreground.width = background.width - 10;
                 foreground.height = background.height - 10;

@@ -10,7 +10,7 @@ namespace EditorTool.PsdExport
         {
             ScrollRect scrollview = LayerWordBinder.swapComponent<ScrollRect>(mainObj);
             RectTransform viewRectTrans = scrollview.GetComponent<RectTransform>();
-            RectTransform bgRectTrans = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "background");
+            RectTransform bgRectTrans = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "background" , "bg");
             viewRectTrans.anchoredPosition3D = bgRectTrans.anchoredPosition3D;
             viewRectTrans.sizeDelta = bgRectTrans.sizeDelta;
 
@@ -46,7 +46,7 @@ namespace EditorTool.PsdExport
             scrollview.viewport = viewportRT;
             scrollview.content = contentRT;
 
-            Scrollbar hbar = LayerWordBinder.findChildComponent<Scrollbar>(mainObj, "hbar");
+            Scrollbar hbar = LayerWordBinder.findChildComponent<Scrollbar>(mainObj, "hbar" , "hb");
             if (hbar != null)
             {
                 scrollview.horizontalScrollbar = hbar;
@@ -54,7 +54,7 @@ namespace EditorTool.PsdExport
                 sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             }
 
-            Scrollbar vbar = LayerWordBinder.findChildComponent<Scrollbar>(mainObj, "vbar");
+            Scrollbar vbar = LayerWordBinder.findChildComponent<Scrollbar>(mainObj, "vbar" , "vb");
             if (vbar != null)
             {
                 scrollview.verticalScrollbar = hbar;
@@ -62,7 +62,7 @@ namespace EditorTool.PsdExport
                 sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             }
 
-            RectTransform cell = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "cell");
+            RectTransform cell = LayerWordBinder.findChildComponent<RectTransform>(mainObj, "cell" , "cl");
             if (cell)
             {
                 Vector3 minPosition = LayerWordBinder.findMinPosition(cell, Vector3.one * float.MaxValue, hbar);

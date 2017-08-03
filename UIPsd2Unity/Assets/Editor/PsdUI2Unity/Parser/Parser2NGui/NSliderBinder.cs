@@ -12,14 +12,14 @@ namespace EditorTool.PsdExport
             {
                 UISlider slider = LayerWordBinder.swapComponent<UISlider>(mainObj);
 
-                UISprite imgBg = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background");
+                UISprite imgBg = LayerWordBinder.findChildComponent<UISprite>(mainObj, "background" , "bg");
                 imgBg.type = UIBasicSprite.Type.Sliced;
 
-                UISprite imgFill = LayerWordBinder.findChildComponent<UISprite>(mainObj, "fill");
+                UISprite imgFill = LayerWordBinder.findChildComponent<UISprite>(mainObj, "fill" , "fl");
                 imgFill.type = UIBasicSprite.Type.Sliced;
                 slider.foregroundWidget = imgFill;
 
-                UISprite imgHandle = LayerWordBinder.findChildComponent<UISprite>(mainObj, "handle");
+                UISprite imgHandle = LayerWordBinder.findChildComponent<UISprite>(mainObj, "handle" , "ha");
                 if (imgHandle != null)
                 {
                     slider.thumb = imgHandle.transform;
