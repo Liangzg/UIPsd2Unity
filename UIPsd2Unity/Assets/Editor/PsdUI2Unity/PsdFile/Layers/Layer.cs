@@ -119,6 +119,7 @@ namespace PhotoshopFile
 
         public EffectsLayer Effects { get; private set; }
 
+        public ObjectBasedEffect BaseEffect { get; private set; }
         ///////////////////////////////////////////////////////////////////////////
 
         public Layer(PsdFile psdFile)
@@ -197,7 +198,10 @@ namespace PhotoshopFile
                     case "lrFX":
                         Effects = (EffectsLayer)adjustmentInfo;
                         break;
-                }
+                    case "lfx2":
+				        BaseEffect = (ObjectBasedEffect) adjustmentInfo;
+				        break;
+				}
 			}
 
 		}

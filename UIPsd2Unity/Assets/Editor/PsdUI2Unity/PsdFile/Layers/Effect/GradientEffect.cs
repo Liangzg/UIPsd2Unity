@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿/* Copyright (c) 2017 LiangZG. See license.txt for your rights */
+
 using PhotoshopFile.Text;
 using UnityEngine;
 
@@ -7,83 +8,34 @@ namespace PhotoshopFile
     public class GradientEffect : EffectBase
     {
 
-        public class Transparency
+        public Color TopColor { get; private set; }
+
+        public Color BottomColor { get; private set; }
+
+        public void ParseDescriptor(DynVal gradDyn)
         {
-
-            public ushort Opacity { get; private set; }
-
-            public Color MinColor { get; private set; }
-
-            public Color MaxColor { get; private set; }
-            public Transparency(PsdBinaryReader reader)
-            {
-                uint localColorStop = reader.ReadUInt32();
-                uint midpointColorStop = reader.ReadUInt32();
-
-                Opacity = reader.ReadUInt16();
-                ushort expansionCount = reader.ReadUInt16();
-                ushort interpolation = reader.ReadUInt16();
-                ushort length = reader.ReadUInt16();
-                ushort gradientMode = reader.ReadUInt16();
-                uint randomNumSeed = reader.ReadUInt32();
-                ushort showFlag = reader.ReadUInt16();
-                ushort usingVectorColorFlag = reader.ReadUInt16();
-                uint roughnessFactor = reader.ReadUInt16();
-                ushort colorModel = reader.ReadUInt16();
-
-                MinColor = reader.ReadPSDColor(16, true);
-                MaxColor = reader.ReadPSDColor(16, true);
-
-                ushort dummy = reader.ReadUInt16();
-            }
+            DynVal cols = gradDyn.FindDynVal("Clrs");
+            parseColors(cols);
         }
 
 
-        public class ColorStop
+        private void parseColors(DynVal cols)
         {
-            public Color ActualColor { get; private set; }
+            DynVal topDyn = cols.Children[cols.Children.Count - 1].FindDynVal("RGBC");
+            TopColor = getColor(topDyn);
 
-            public List<Transparency> Trsps { get; private set; }
-
-            public ColorStop(PsdBinaryReader reader)
-            {
-                uint localColorStop = reader.ReadUInt32();
-                uint midpointColorStop = reader.ReadUInt32();
-                ushort followColorMode = reader.ReadUInt16();
-
-                ActualColor = reader.ReadPSDColor(16 , true);
-
-                ushort numTransparency = reader.ReadUInt16();
-                Trsps = new List<Transparency>(numTransparency);
-                for (int j = 0; j < numTransparency; j++)
-                {
-                    Trsps.Add(new Transparency(reader));
-                }
-            }
+            DynVal bottomDyn = cols.Children[0].FindDynVal("RGBC");
+            BottomColor = getColor(bottomDyn);
         }
 
-        
-        public List<ColorStop> ColorStops { get; private set; }
-         
-        public GradientEffect(PsdBinaryReader r, string key)
+        private Color getColor(DynVal dv)
         {
-            m_key = key;
+            if(dv == null)  return Color.black;
 
-            uint version = r.ReadUInt32();
-
-            //Is gradient reversed
-            bool isReversed = r.ReadBoolean();
-            bool isDithered = r.ReadBoolean();
-
-            string gradientName = r.ReadUnicodeString();
-
-            ushort numColors = r.ReadUInt16();
-            ColorStops = new List<ColorStop>(numColors);
-            for (int i = 0; i < numColors; i++)
-            {
-                ColorStops.Add(new ColorStop(r));
-            }
-
+            int r = (int)(double)dv.FindDynVal("Rd").Value;
+            int g = (int)(double)dv.FindDynVal("Grn").Value;
+            int b = (int)(double)dv.FindDynVal("Bl").Value;
+            return Util.FromArgb(r, g, b);
         }
     }
 }

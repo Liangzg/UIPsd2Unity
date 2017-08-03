@@ -63,19 +63,32 @@ namespace EditorTool.PsdExport
 
                 text.fontSize = layerText.FontBaseline != 0 ? (int)layerText.FontSize / 2 : (int)layerText.FontSize;
                 text.transform.SetAsFirstSibling();
-                
+
+                if (layer.BaseEffect != null)
+                {
+                    GradientEffect gradient = layer.BaseEffect.Gradient;
+                    if (gradient != null)
+                    {
+                        text.applyGradient = true;
+                        textColor = Color.white;
+                        text.gradientTop = gradient.TopColor;
+                        text.gradientBottom = gradient.BottomColor;
+                    }
+                }
+
                 if (layer.Effects != null)
                 {
                     EffectsLayer effectLayer = layer.Effects;
                     if (effectLayer.IsDropShadow)
                     {
                         text.effectStyle = UILabel.Effect.Shadow;
-                        text.effectColor = layer.Effects.DropShadow.ShadowColor;
+                        text.effectDistance = new Vector2(2 , 2);
+                        text.effectColor = effectLayer.DropShadow.Color;
                     }
                     if (effectLayer.IsOuterGlow)
                     {
                         text.effectStyle = UILabel.Effect.Outline;
-                        text.effectColor = layer.Effects.OuterGlow.Color;
+                        text.effectColor = effectLayer.OuterGlow.Color;
                     }
                 }
 

@@ -23,13 +23,14 @@ namespace PhotoshopFile
         public GlowEffect(PsdBinaryReader r, string key)
         {
             m_key = key;
-            uint version = r.ReadUInt32(); //two version specifications?!?
+            uint version = r.ReadUInt32(); //two version
             this.Blur = r.ReadUInt32();
             this.Intensity = r.ReadUInt32();
-            this.Color = r.ReadPSDColor(16, true); //Inner color (no alpha)
+            Color golwColor = readColor(r); 
             this.BlendModeKey = this.ReadBlendKey(r);
             this.Enabled = r.ReadBoolean();
             this.Opacity = r.ReadByte();
+            this.Color = Util.FromArgb(Opacity, golwColor);
 
             switch (version)
             {
@@ -40,10 +41,20 @@ namespace PhotoshopFile
                     //TODO!
                     if (this.Inner)
                         this.Unknown = r.ReadByte();
-                    this.UnknownColor = r.ReadPSDColor(16, true); //unknown color(no alpha)
+                    this.UnknownColor = r.ReadPSDColor(16, true); //unknown color
 //                    byte[] Data = r.ReadBytes((int)r.BytesToEnd);
                     break;
             }
+        }
+
+        private Color readColor(PsdBinaryReader reader)
+        {
+            reader.BaseStream.Position += 2; //Always?
+            ushort r = reader.ReadUInt16();
+            ushort g = reader.ReadUInt16();
+            ushort b = reader.ReadUInt16();
+            ushort a = reader.ReadUInt16();
+            return Util.FromArgb((int)a >> 8, (int)r >> 8, (int)g >> 8, (int)b >> 8);
         }
     }
 

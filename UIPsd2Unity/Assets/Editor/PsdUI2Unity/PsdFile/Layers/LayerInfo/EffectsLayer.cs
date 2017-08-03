@@ -63,7 +63,7 @@ namespace PhotoshopFile
             get { return GetEffect(EffectTypes.sofi); }
         }
 
-        public GradientEffect Gradient;
+        public GradientMap Gradient;
 
         public EffectsLayer(PsdBinaryReader reader , string key)
         {

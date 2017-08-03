@@ -47,13 +47,13 @@ namespace PhotoshopFile.Text
         {
             var signature = reader.ReadAsciiChars(4);
             if (signature != "8BIM")
-                throw new PsdInvalidException("Could not read LayerInfo due to signature mismatch.");
+                throw new PsdInvalidException("Could not read LayerInfo due to signature mismatch." + signature);
 
             var key = reader.ReadAsciiChars(4);
             var length = reader.ReadInt32();
 //            var startPosition = reader.BaseStream.Position;
 
-            UnityEngine.Debug.Log("EffectLayerFactory key:" + key);
+//            UnityEngine.Debug.Log("EffectLayerFactory key:" + key);
 
             LayerInfo result;
             switch (key)

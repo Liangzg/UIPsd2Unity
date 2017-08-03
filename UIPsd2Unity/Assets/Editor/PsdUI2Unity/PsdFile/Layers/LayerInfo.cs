@@ -50,6 +50,12 @@ namespace PhotoshopFile
                 case "lrFX":
                     result = new EffectsLayer(reader, key);
                     break;
+                case "shmd":
+                    result = new MetadataSetting(reader);
+			        break;
+                case "lfx2":
+                    result = new ObjectBasedEffect(reader , length);
+			        break;
                 default:
 					result = new RawLayerInfo(reader, key, length);
 					break;

@@ -125,39 +125,38 @@ namespace PhotoshopFile
             {
                 foreach (DynVal d in Children)
                 {
-                    //                    buf.AppendLine(d.ToString());
                     d.getString(lineprefix + "\t", buf);
                 }
             }
-            //            if (Value is Dictionary<string,object>){
-            //                s += getString(lineprefix + "\t", Value);
-            //            }
         }
 
         public string getString(string lineprefix, object o)
         {
             if (o == null) return "null";
-
+            
             if (o is Dictionary<string, object>)
             {
-                string s = "\n" + lineprefix + "{";
+                StringBuilder buf = new StringBuilder();
+                buf.Append(string.Concat("\n" , lineprefix , "{"));
                 foreach (KeyValuePair<string, object> p in (Dictionary<string, object>)o)
                 {
-                    s += "\n" + lineprefix + "\t" + p.Key + ":" + getString(lineprefix + "\t", p.Value) + ",";
+                    buf.AppendLine(string.Format("\n{0}\t{1}:{2},", lineprefix , p.Key , getString(lineprefix + "\t", p.Value) ));
                 }
-                s += "\n" + lineprefix + "}";
-                return s;
+                buf.Append(lineprefix + "}");
+                return buf.ToString();
             }
+            
             if (o is List<object>)
             {
-                string s = "[";
+                StringBuilder buf = new StringBuilder();
+                buf.Append("[");
                 foreach (object a in (List<object>)o)
                 {
-                    s += getString(lineprefix, a);
-                    s += ",";
+                    buf.Append(getString(lineprefix, a)).Append(",");
                 }
-                s = s.TrimEnd(',') + "]";
-                return s;
+                buf.Remove(buf.Length - 1, 1);
+                buf.Append("]");
+                return buf.ToString();
             }
             if (o is byte[])
             {
@@ -197,7 +196,7 @@ namespace PhotoshopFile
             return v;
         }
 
-        public static string ReadEnumeratedRef(PsdBinaryReader r)
+        public static DynVal ReadEnumeratedRef(PsdBinaryReader r)
         {
             DynVal v = new DynVal();
             v.Type = OSType.EnumeratedRef;
@@ -207,8 +206,8 @@ namespace PhotoshopFile
 
             string TypeID = ReadSpecialString(r);
             string enumVal = ReadSpecialString(r);
-            string value = GetMeaningOfFourCC(TypeID) + "." + GetMeaningOfFourCC(enumVal);
-            return value;
+            v.Value = GetMeaningOfFourCC(TypeID) + "." + GetMeaningOfFourCC(enumVal);
+            return v;
         }
 
         public static DynVal ReadOffset(PsdBinaryReader r)
@@ -224,9 +223,11 @@ namespace PhotoshopFile
 
         public static DynVal ReadAlias(PsdBinaryReader r)
         {
+            DynVal v = new DynVal();
+            v.Type = OSType.Alias;
             uint length = r.ReadUInt32();
-            var unknown = r.ReadBytes((int)length);
-            return null;
+            v.Value = r.ReadBytes((int)length);
+            return v;
         }
 
         public static DynVal ReadProperty(PsdBinaryReader r)
@@ -358,7 +359,53 @@ namespace PhotoshopFile
 
 
 
+        public DynVal FindDynVal(string fourccName)
+        {
+            if (fourccName.Equals(Name)) return this;
 
+            if (Children != null)
+            {
+                for (int i = 0 , max = Children.Count; i < max; i++)
+                {
+                    DynVal child = Children[i];
+                    DynVal _dyn = child.FindDynVal(fourccName);
+                    if(_dyn != null)    return _dyn;
+                }                
+            }
+
+            if (this.Value is Dictionary<string, object>)
+            {
+                Dictionary<string, object> dynDic = (Dictionary<string, object>) this.Value;
+                foreach (object p in dynDic.Values)
+                {
+                    if (p is DynVal)
+                    {
+                        DynVal _dyn = ((DynVal)p).FindDynVal(fourccName);
+                        if (_dyn != null) return _dyn;
+                    }
+                    
+                }
+            }
+            if (this.Value is List<object>)
+            {
+                List<object> vs = (List<object>) this.Value;
+                for (int i = 0; i < vs.Count; i++)
+                {
+                    if (vs[i] is DynVal)
+                    {
+                        DynVal _dyn = ((DynVal)vs[i]).FindDynVal(fourccName);
+                        if (_dyn != null) return _dyn;
+                    }
+                }
+            }
+
+            if (this.Value is DynVal)
+            {
+                return ((DynVal) Value).FindDynVal(fourccName);
+            }
+
+            return null;
+        }
 
 
         public static Dictionary<string, string> FourCCs;
@@ -367,18 +414,17 @@ namespace PhotoshopFile
             if (FourCCs == null)
                 LoadFourCC();
             if (fourCC.Length != 4)
-                return fourCC;
+                return fourCC.Trim();
 
             if (FourCCs.ContainsKey(fourCC))
                 return FourCCs[fourCC];
-            return fourCC;
+            return fourCC.Trim();
         }
         public static void LoadFourCC()
         {
             string[] prefixes = new string[] { "Key", "Enum", "Event", "Class", "Type" };
-            string contents = FourCC.Content;
             FourCCs = new Dictionary<string, string>();
-            string[] lines = contents.Split("\r\n".ToCharArray());
+            string[] lines = FourCC.ContentArr;
             foreach (string line in lines)
             {
                 string[] items = line.Split('\t');
@@ -395,7 +441,7 @@ namespace PhotoshopFile
                         break;
                     }
                 }
-                FourCCs.Add(items[1].PadRight(4, ' '), name);
+                FourCCs.Add(items[1].PadRight(4, ' '), name.Trim());
             }
         }
     }

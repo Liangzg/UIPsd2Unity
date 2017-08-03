@@ -91,7 +91,7 @@ namespace PhotoshopFile
             //            double right = reader.ReadDouble();
             //            double bottom = reader.ReadDouble();
 
-            byte[] datas = reader.ReadBytes((int)reader.BytesToEnd);
+            byte[] datas = reader.ReadBytes(32);
 
             engineData = (Dictionary<string, object>)TxtDescriptor.Children.Find(c => c.Name == "EngineData").Value;
             StylesheetReader = new TdTaStylesheetReader(engineData);

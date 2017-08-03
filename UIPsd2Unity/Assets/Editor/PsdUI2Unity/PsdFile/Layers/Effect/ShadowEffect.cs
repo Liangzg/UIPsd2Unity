@@ -30,20 +30,14 @@ namespace PhotoshopFile
             this.Intensity = r.ReadUInt32();
             this.Angle = r.ReadUInt32();
             this.Distance = r.ReadUInt32();
-            this.Color = r.ReadPSDColor(16, true);
+            Color shadowColor = r.ReadPSDColor(16, true);
             this.BlendModeKey = this.ReadBlendKey(r);
             this.Enabled = r.ReadBoolean();
             this.UseGlobalAngle = r.ReadBoolean();
             this.Opacity = r.ReadByte();
             NativeColor = r.ReadPSDColor(16, true);
-        }
 
-        public Color ShadowColor
-        {
-            get
-            {
-                return new Color(Color.r , Color.g , Color.b , this.Opacity / 255.0f);
-            }
+            this.Color = Util.FromArgb(Opacity, shadowColor);
         }
     }
 

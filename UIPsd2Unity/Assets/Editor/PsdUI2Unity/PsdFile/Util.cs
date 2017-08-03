@@ -252,6 +252,10 @@ namespace PhotoshopFile
         {
             return new Color(r / 255.0f, g / 255.0f, b / 255.0f, 1);
         }
+        public static Color FromArgb(int a, Color col)
+        {
+            return new Color(col.r, col.g , col.b, a / 255.0f);
+        }
     }
 
   /// <summary>

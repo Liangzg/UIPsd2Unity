@@ -2011,5 +2011,17 @@ phEnumZoomOut   ZmOt zoomOut
 phEnumZip ZpEn    zip
 phKeyZigZagType ZZTy zigZagType
 ";
+
+	    private static string[] mContentArr;
+	    public static string[] ContentArr
+	    {
+	        get
+	        {
+                if(mContentArr == null)
+                    mContentArr = Content.Split("\r\n".ToCharArray());
+	            return mContentArr;
+	        }
+	    }
+        
 	}
 }
