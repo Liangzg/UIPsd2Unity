@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 using UnityEditor;
@@ -25,16 +26,17 @@ namespace UIHelper
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("Field"));
                 else
                 {
-                    GUI.color = Color.yellow;
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty("Controller"));
+//                    GUI.color = Color.yellow;
+//                    EditorGUILayout.PropertyField(serializedObject.FindProperty("Controller"));
                     isRoot = true;
-                    GUI.color = Color.white;
+//                    GUI.color = Color.white;
                 }             
             }
 
             SerializedProperty requirePath = serializedObject.FindProperty("LuaRequirePath");
 //            requirePath.stringValue = EditorGUILayout.TextField("LuaRequirePath" , requirePath.stringValue);
-            EditorGUILayout.PropertyField(requirePath);
+            if(!isRoot)
+                EditorGUILayout.PropertyField(requirePath);
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("FilePath", GUILayout.Width(120)))
@@ -45,9 +47,10 @@ namespace UIHelper
                 root.FilePath = selectFilePath.Replace(Application.dataPath, "/").Replace("//" , "");
                 root.Field = Path.GetFileNameWithoutExtension(selectFilePath);
 
+                string requireLuaPath = root.FilePath.Replace("LuaFramework/Lua/", "");
                 serializedObject.FindProperty("FilePath").stringValue = root.FilePath;
                 serializedObject.FindProperty("Field").stringValue = root.Field;
-                requirePath.stringValue = root.FilePath.Replace(".lua", "").Replace("/" , ".");
+                requirePath.stringValue = requireLuaPath.Replace(".lua", "").Replace("/" , ".");
             }
             GUILayout.TextArea(root.FilePath);
             EditorGUILayout.EndHorizontal();
@@ -55,11 +58,17 @@ namespace UIHelper
             GUI.color = Color.green;
             if (isRoot && GUILayout.Button("Build") )
             {
+                if (PrefabUtility.GetPrefabType(root.gameObject) != PrefabType.PrefabInstance)
+                {
+                    EditorUtility.DisplayDialog("提示", "请先存储UI为Prefab\n注意格式为（xxxPanel.prefab）", "OK");
+                    return;
+                }
+
                 XmlDocument doc = new XmlDocument();
                 XmlDeclaration dec = doc.CreateXmlDeclaration("1.0", "UTF-8", "yes");
                 doc.AppendChild(dec);
 
-                root.BuildPanel(doc , root.gameObject);
+                root.BuildPanel(doc , root.gameObject , true);
 
                 string genDir = Path.Combine(Application.dataPath, ToolConst.GenLogFolder);
                 if (! Directory.Exists(genDir)) Directory.CreateDirectory(genDir);
@@ -68,6 +77,7 @@ namespace UIHelper
                 doc.Save(filePath);
 
                 Debug.Log("<color=#2fd95b>Build Success !</color>");
+                EditorUtility.DisplayDialog("恭喜", "Build Success ！", "OK");
             }
             GUI.color = Color.white;
 

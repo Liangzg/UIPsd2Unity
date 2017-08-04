@@ -1,8 +1,8 @@
-﻿#if UNITY_EDITOR
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using System.Xml;
-
+#endif
 namespace UIHelper
 {
     /// <summary>
@@ -65,7 +65,11 @@ namespace UIHelper
             UIInput input = this.gameObject.GetComponent<UIInput>();
             if(input)   types.Add(input.GetType().FullName);
 
-            if (types.Count <= 0)
+            UIWrapContent wrap = this.gameObject.GetComponent<UIWrapContent>();
+            if (wrap)
+                types.Add(wrap.GetType().FullName);
+
+            //if (types.Count <= 0)
             {
                 types.Add("GameObject");
                 types.Add("Transform");
@@ -74,7 +78,7 @@ namespace UIHelper
             return types;
         }
 
-
+#if UNITY_EDITOR
         /// <summary>
         /// 序列化UI配置数据
         /// </summary>
@@ -97,10 +101,8 @@ namespace UIHelper
             this.ScriptType = ele.GetAttribute("ScriptType");
             this.relativeHierarchy = ele.GetAttribute("hierarchy");
         }
-
+#endif
 
     }
 
 }
-
-#endif

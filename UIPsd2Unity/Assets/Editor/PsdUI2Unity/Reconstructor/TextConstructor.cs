@@ -57,7 +57,7 @@ namespace EditorTool.PsdExport
                 NGUISettings.ambigiousFont = text.trueTypeFont;
                 text.depth = layerIndex;
                 text.fontStyle = layerText.Style;
-                if (text.fontStyle == FontStyle.Bold)   text.spacingX = 6;
+                if (text.fontStyle == FontStyle.Bold)   text.spacingX = (int)layerText.FontSize / 4;
 
                 text.fontSize = layerText.FontBaseline != 0 ? (int)layerText.FontSize / 2 : (int)layerText.FontSize;
                 text.transform.SetAsFirstSibling();

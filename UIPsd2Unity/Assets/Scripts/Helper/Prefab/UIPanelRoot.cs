@@ -1,12 +1,12 @@
-﻿#if UNITY_EDITOR
-using System;
-using System.Collections;
+﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+#if UNITY_EDITOR
+using UnityEditor;
 using System.Xml;
-using UnityEngine.UI;
+#endif
 
 namespace UIHelper
 {
@@ -19,15 +19,16 @@ namespace UIHelper
         /// </summary>
         public string LuaRequirePath;
         public string FilePath = "";
-        /// <summary>
-        /// 控制逻辑Ctrl名称
-        /// </summary>
-        public string Controller;
+//        /// <summary>
+//        /// 控制逻辑Ctrl名称
+//        /// </summary>
+//        public string Controller;
 
         public int Depth = -1;
         public GameObject RelactiveRoot;
         public string relativePath;
 
+        private bool isRoot { get; set; }
         public string initRelativeHierarchy(GameObject root)
         {
             Depth = 0;
@@ -44,8 +45,11 @@ namespace UIHelper
             return relativePath;
         }
 
-        public void BuildPanel(XmlDocument doc , GameObject root)
+#if UNITY_EDITOR
+        public void BuildPanel(XmlDocument doc , GameObject root , bool isRoot)
         {
+            this.isRoot = isRoot;
+
             this.initRelativeHierarchy(root);
 
             if (string.IsNullOrEmpty(FilePath))
@@ -54,15 +58,15 @@ namespace UIHelper
                 return;
             }
 
-            
-            UIPanelRoot[] roots = this.GetComponentsInChildren<UIPanelRoot>();
+
+            UIPanelRoot[] roots = this.GetComponentsInChildren<UIPanelRoot>(true);
             List<UIPanelRoot> childRoots = new List<UIPanelRoot>();
             foreach (UIPanelRoot childPanel in roots)
             {
                 if (childPanel.gameObject.Equals(this.gameObject)) continue;
 
                 childRoots.Add(childPanel);
-                childPanel.BuildPanel(doc, root);
+                childPanel.BuildPanel(doc, root , false);
             }
 
             List<UIGenFlag> childFlags = new List<UIGenFlag>();
@@ -73,10 +77,8 @@ namespace UIHelper
                                 : ToolConst.LuaSubPanelTempletPath;
             this.writeScriptFile(childRoots ,childFlags , templetPath);
 
-#if UNITY_EDITOR
             //保存记录
             this.serializePanelRoot(doc , childFlags);
-#endif
         }
 
 
@@ -108,11 +110,15 @@ namespace UIHelper
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
             string tempPath = Path.Combine(Application.dataPath, templetPath);
+            string fileText = "";
             Dictionary<string, string> localWidgets = new Dictionary<string, string>();
-            string fileText = readLocalFile(path , localWidgets);
+            if (!File.Exists(path))
+                fileText = File.ReadAllText(tempPath);
+            else
+                fileText = readLocalFile(path , localWidgets);
 
             StringBuilder buf = new StringBuilder();
-            string src = "src=";
+            //string src = "src=";
             string pathFormat = ",path=";
             foreach (UIPanelRoot childPanel in panelRoots)
             {
@@ -152,6 +158,9 @@ namespace UIHelper
                     {
                         format = this.replace(format, value, "onChange");
                         format = this.replace(format, value, "onSubmit");
+                    }else if (flag.ScriptType == typeof (UISlider).FullName || flag.ScriptType == typeof(UIScrollBar).FullName)
+                    {
+                        format = this.replace(format, value, "onValueChange");
                     }
                     localWidgets.Remove(formatArr[0]);
                 }
@@ -165,16 +174,25 @@ namespace UIHelper
                     buf.AppendLine(value);
             }
 
-            if (string.IsNullOrEmpty(fileText))
-            {
-                fileText = File.ReadAllText(tempPath);
-            }
             fileText = fileText.Replace("#SCRIPTNAME#", Path.GetFileNameWithoutExtension(path));
             fileText = fileText.Replace("#WIDGETS#", buf.ToString());
-            if (!string.IsNullOrEmpty(this.Controller))
-                fileText = fileText.Replace("#SCRIPTCTRL#", this.Controller);
 
-            File.WriteAllText(path , fileText);
+            //            if (!string.IsNullOrEmpty(this.Controller))
+            //                fileText = fileText.Replace("#SCRIPTCTRL#", this.Controller);
+            UnityEngine.Object prefab = PrefabUtility.GetPrefabParent(this.gameObject);
+            string assetPath = AssetDatabase.GetAssetPath(prefab);
+                Debug.LogWarning(assetPath);
+            if (!string.IsNullOrEmpty(assetPath))
+                assetPath = assetPath.Replace("Assets/Res/Prefab/Gui/", "").Replace("Panel.prefab" , "");
+            if (this.isRoot && !string.IsNullOrEmpty(assetPath))
+            {
+                fileText = fileText.Replace("#CREATEPATH#", assetPath);
+                string[] pathArr = assetPath.Split('/');
+                fileText = fileText.Replace("#CLOSEPATH#", pathArr[pathArr.Length - 1]);
+            }
+
+            if (!string.IsNullOrEmpty(fileText))
+                File.WriteAllText(path , fileText);
         }
 
         private string replace(string src, string dest, string key)
@@ -183,10 +201,10 @@ namespace UIHelper
             int di = dest.IndexOf(key);
             if (si < 0 || di < 0) return src;
 
-            int endSi = src.IndexOf(",", si);
+            int endSi = src.LastIndexOf(",");
             string srcChunk = src.Substring(si + 1, endSi - si - 2);
-            
-            int endDi = dest.IndexOf(",", di);
+
+            int endDi = dest.LastIndexOf(",");
             string destChunk = dest.Substring(di + 1, endDi - di - 2);
 
             return src.Replace(srcChunk, destChunk);
@@ -198,53 +216,49 @@ namespace UIHelper
         /// <param name="filePath"></param>
         /// <returns></returns>
         private string readLocalFile(string filePath , Dictionary<string, string> localWidgets)
-        {            
-            if (File.Exists(filePath))
-            {
-                string fileText = File.ReadAllText(filePath);
-                fileText = fileText.Replace("\r\n", "\n");
-                string[] fileLinearArr = fileText.Split('\n');
-                bool start = false;
-                string startWidgets = "widgets = {";
-                string endStr = "}";
-                string path = ",path=";
-                int startIndex = 0;
-                int endIndex = 0;
+        {
+            string fileText = File.ReadAllText(filePath);
+            fileText = fileText.Replace("\r\n", "\n");
+            string[] fileLinearArr = fileText.Split('\n');
+            bool start = false;
+            string startWidgets = "widgets = {";
+            string endStr = "}";
+            string path = ",path=";
+            int startIndex = 0;
+            int endIndex = 0;
 
-                for (int i = 0; i < fileLinearArr.Length; i++)
+            for (int i = 0; i < fileLinearArr.Length; i++)
+            {
+                if (fileLinearArr[i].Contains(startWidgets))
                 {
-                    if (fileLinearArr[i].Contains(startWidgets))
-                    {
-                        startIndex = i;
-                        start = true;
-                    }
-                    if (start && fileLinearArr[i].Trim().Equals(endStr))
-                    {
-                        endIndex = i;
-                        break;
-                    }
-                    
-                    if (fileLinearArr[i].Contains(path))
-                    {
-                        string[] kv = fileLinearArr[i].Split(new []{ path } , StringSplitOptions.None);
-                        localWidgets[kv[0]] = fileLinearArr[i];                        
-                    }
+                    startIndex = i;
+                    start = true;
+                }
+                if (start && fileLinearArr[i].Trim().Equals(endStr))
+                {
+                    endIndex = i;
+                    break;
                 }
 
-
-                string[] newText = new string[fileLinearArr.Length - (endIndex - startIndex) + 2];
-                Array.Copy(fileLinearArr ,  0 , newText, 0 , startIndex + 1);
-                Array.Copy(fileLinearArr , endIndex , newText , startIndex + 2, fileLinearArr.Length - endIndex);
-                newText[startIndex + 1] = "#WIDGETS#";
-                return string.Join("\r\n" , newText);
+                if (fileLinearArr[i].Contains(path))
+                {
+                    string[] kv = fileLinearArr[i].Split(new []{ path } , StringSplitOptions.None);
+                    localWidgets[kv[0]] = fileLinearArr[i];
+                }
             }
-            return null;
-        }  
-      
+
+
+            string[] newText = new string[fileLinearArr.Length - (endIndex - startIndex) + 2];
+            Array.Copy(fileLinearArr ,  0 , newText, 0 , startIndex + 1);
+            Array.Copy(fileLinearArr , endIndex , newText , startIndex + 2, fileLinearArr.Length - endIndex);
+            newText[startIndex + 1] = "#WIDGETS#";
+            return string.Join("\r\n" , newText);
+        }
+
         private string formatExport(UIGenFlag genFlag)
         {
             StringBuilder buf = new StringBuilder();
-            buf.AppendFormat("\t\t{{field=\"{0}\",path=\"{1}\",", 
+            buf.AppendFormat("\t\t{{field=\"{0}\",path=\"{1}\",",
                              string.IsNullOrEmpty(genFlag.Field) ? genFlag.gameObject.name : genFlag.Field,
                              genFlag.relativeHierarchy);
 
@@ -274,7 +288,10 @@ namespace UIHelper
             }else if (genFlag.ScriptType == typeof(UIScrollBar).FullName)
             {
                 buf.Append("src=LuaScrollBar, onValueChange = function (scrollBar) --[===[todo change]===]  end ");
-            }else 
+            }else if (genFlag.ScriptType == typeof(UIWrapContent).FullName)
+            {
+                buf.Append("src=LuaWrapContent, onInitializeItem = function (go, wrapIndex, realIndex) --[===[todo change]===]  end ");
+            }else
             {
                 buf.AppendFormat("src=\"{0}\"", genFlag.ScriptType);
             }
@@ -301,7 +318,7 @@ namespace UIHelper
             ele.SetAttribute("filePath", this.FilePath);
             ele.SetAttribute("luaRequirePath", this.LuaRequirePath);
             ele.SetAttribute("hierarchy", string.IsNullOrEmpty(relativePath) ? this.gameObject.name : relativePath);
-            if (!string.IsNullOrEmpty(this.Controller))         ele.SetAttribute("ctrlName", this.Controller);  
+//            if (!string.IsNullOrEmpty(this.Controller))         ele.SetAttribute("ctrlName", this.Controller);
 
                 foreach (UIGenFlag flag in flags)
             {
@@ -325,7 +342,7 @@ namespace UIHelper
             {
                 LuaRequirePath = this.FilePath.Replace(".lua", "").Replace("/", ".");
             }
-            this.Controller = ele.GetAttribute("ctrlName");
+//            this.Controller = ele.GetAttribute("ctrlName");
 
             foreach (XmlElement childEle in ele.ChildNodes)
             {
@@ -340,9 +357,8 @@ namespace UIHelper
                 flag.deserializeFlag(childEle);
             }
         }
+#endif
 
     }
 
 }
-
-#endif

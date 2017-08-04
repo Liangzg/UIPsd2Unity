@@ -1,11 +1,13 @@
 -- @Author:
--- @Desc :
+-- @Last Modified time: 2017-01-01 00:00:00
+-- @Desc
 
 local #SCRIPTNAME# = class("#SCRIPTNAME#")
---self.gameObject
---self.transform
 
-function #SCRIPTNAME#:Awake()
+
+function #SCRIPTNAME#:Awake(go)
+    self.gameObject = go
+    self.transform = go.transform
     self.widgets = {
 #WIDGETS#
     }
@@ -13,16 +15,14 @@ function #SCRIPTNAME#:Awake()
 end
 
 
-function #SCRIPTNAME#:Start()
+function #SCRIPTNAME#:Copy(parentGO)
+    local newGo = newObject(self.gameObject)
+    Util.SetParent(newGo , parentGO)
 
+    local copy = self.new()
+    copy:Awake(newGo)
+    return copy
 end
-
-
-
-function #SCRIPTNAME#:OnClose()
-
-end
-
 
 function #SCRIPTNAME#:OnDestroy()
 

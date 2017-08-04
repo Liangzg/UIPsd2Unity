@@ -169,8 +169,6 @@ public class UIAtlasFolderMaker {
 
 	void UpdateAtlas (UIAtlas atlas , List<Texture> textures, bool keepSprites)
 	{
-	    NGUISettings.atlas = atlas;
-
 		// Create a list of sprites using the collected textures
 		List<UIAtlasMaker.SpriteEntry> sprites = UIAtlasMaker.CreateSprites(textures);
 
@@ -286,16 +284,14 @@ public class UIAtlasFolderMaker {
         if (!File.Exists(atlasRootPath))
         {
             atlasRoot = createAtlas(atlasRootPath);
-            atlasList.Add(atlasRoot);
             UpdateAtlas(atlasRoot, rootTextures, false);
         }
         else
         {
             atlasRoot = AssetDatabase.LoadAssetAtPath<UIAtlas>(atlasRootPath);
-            atlasList.Add(atlasRoot);
             UpdateAtlas(atlasRoot, rootTextures, true);
 //            NGUIEditorTools.UpgradeTexturesToSprites(atlasRoot);
         }
-        
+        atlasList.Add(atlasRoot);
     }
 }
